@@ -10,9 +10,8 @@ public class EasyncClient {
 	public EasyncClient() {
 		network = new NetworkHandler();
 		network.connect();
-		network.writeLine("Message from Client: Test");
-		network.writeLine("Message from Client: Test");
-		network.writeLine("Message from Client: Test");
+		network.writeLine("Client: #1");
+		network.sendFile("/tmp/a");
 	}
 	
 	public static void main(String[] args) {

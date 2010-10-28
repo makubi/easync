@@ -7,14 +7,10 @@ import easync.NetworkHandler;
 
 public class ConnectionHandler implements Runnable {
 
-	private Socket controlSocket;
-	private Socket dataSocket;
-
 	private NetworkAccess network;
 
 	public ConnectionHandler(Socket controlSocket, Socket dataSocket) {
-		this.controlSocket = controlSocket;
-		this.dataSocket = dataSocket;
+		network = new NetworkHandler(controlSocket, dataSocket);
 		Thread connectionHandler = new Thread(this);
 		connectionHandler.start();
 	}
@@ -22,11 +18,8 @@ public class ConnectionHandler implements Runnable {
 	@Override
 	public void run() {
 			try {
-				network = new NetworkHandler(controlSocket, dataSocket);
 				network.connect();
-				network.writeLine("Message from Server: Test");
-				network.writeLine("Message from Server: Test");
-				network.writeLine("Message from Server: Test");
+				network.writeLine("Server: #1");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

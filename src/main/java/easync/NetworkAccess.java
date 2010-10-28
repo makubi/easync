@@ -1,5 +1,7 @@
 package easync;
 
+import java.io.BufferedReader;
+
 
 public interface NetworkAccess {
 
@@ -13,4 +15,10 @@ public interface NetworkAccess {
 	 * Verbindung herstellen.
 	 */
 	public void connect();
+	
+	public void receivingFile(String filename, int bufferSize, int chunks);
+	
+	public void sendFile(String filename);
+
+	public BufferedReader getInput();
 }

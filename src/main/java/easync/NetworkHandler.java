@@ -1,7 +1,12 @@
 package easync;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -18,13 +23,12 @@ public class NetworkHandler implements NetworkAccess, Runnable {
 
 	private BufferedReader input;
 	private BufferedWriter output;
-	
+
 	private Thread networkThread;
 	private Thread networkInputThread;
 
 	public NetworkHandler() {
 		networkThread = new Thread(this);
-		
 		networkThread.start();
 	}
 
@@ -33,10 +37,7 @@ public class NetworkHandler implements NetworkAccess, Runnable {
 		this.dataSocket = dataSocket;
 
 		networkThread = new Thread(this);
-		
-		
 		networkThread.start();
-		
 	}
 
 	private void initStreams() {
@@ -49,11 +50,15 @@ public class NetworkHandler implements NetworkAccess, Runnable {
 				output = new BufferedWriter(new OutputStreamWriter(
 						controlSocket.getOutputStream()));
 			}
-			networkInputThread = new NetworkInputHandler(input);
+			networkInputThread = new NetworkInputHandler(this);
 			networkInputThread.start();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void run() {
 	}
 
 	@Override
@@ -64,6 +69,14 @@ public class NetworkHandler implements NetworkAccess, Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void writeLine(int number) {
+		writeLine(""+number);
+	}
+	
+	public void writeLine(long number) {
+		writeLine(""+number);
 	}
 
 	public void connect() {
@@ -84,7 +97,97 @@ public class NetworkHandler implements NetworkAccess, Runnable {
 	}
 
 	@Override
-	public void run() {		
-		
+	public void receivingFile(String filepath, int bufferSize, int chunks) {
+		FileOutputStream fos = null;
+		BufferedInputStream bis = null;
+		try {
+			int dirFileSeparationPos = getFileSeparationPos(filepath);
+			
+			// TODO: Achtung auf / und \
+			String filename = filepath.substring(dirFileSeparationPos + 1);
+			String filedir = filepath.substring(0, dirFileSeparationPos);
+
+			File dir = new File(filedir);
+			dir.mkdirs();
+
+			File file = new File(filedir + File.separator + filename);
+			file.createNewFile();
+			fos = new FileOutputStream(file);
+
+			byte[] buffer = new byte[bufferSize];
+			bis = new BufferedInputStream(dataSocket.getInputStream());
+
+			for (int i = 0; i < chunks; i++) {
+				int len = bis.read(buffer);
+				fos.write(buffer, 0, len);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				fos.close();
+				bis.close();
+				// TODO: Close streams
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
 	}
+
+	private int getFileSeparationPos(String filepath) {
+		int pos = filepath.lastIndexOf('/');
+		if(pos == -1)
+			pos = filepath.lastIndexOf('\\');
+		return pos;
+	}
+
+	@Override
+	public void sendFile(String filepath) {
+		FileInputStream fis = null;
+		BufferedOutputStream bos = null;
+		try {
+			int bufferSize = 512;
+			
+			File file = new File(filepath);
+			fis = new FileInputStream(file);
+			
+			byte[] buffer = new byte[bufferSize];
+			bos = new BufferedOutputStream(
+					dataSocket.getOutputStream());
+			
+			long chunks = file.length() / buffer.length;
+			if (file.length() % buffer.length != 0)
+				chunks++;
+
+			writeLine(NetworkCommands.CMD_SEND_FILE);
+			
+			writeLine(filepath);
+			writeLine(bufferSize);
+			writeLine(chunks);
+
+			int len;
+			while ((len = fis.read(buffer)) != -1) {
+				bos.write(buffer, 0, len);
+				bos.flush();
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				fis.close();
+				bos.close();
+				// TODO: Close streams
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	public BufferedReader getInput() {
+		return input;
+	}
+
 }
