@@ -13,6 +13,16 @@ import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+
+/**
+ * Konkrete Implementierung der Netzwerkfaehigkeit.
+ * Diese Klasse kuemmert sich um die Kommunikation zwischen Client und Server.
+ * Sie ist auch (noch) zustaendig fuer den Dateiempfang und -versand.
+ * Das Lesen des Input-Streams passiert in einer eigenen Klasse.
+ * 
+ * @see easync.NetworkInputHandler
+ *
+ */
 public class NetworkHandler implements NetworkAccess, Runnable {
 
 	private String server = "localhost";
@@ -27,11 +37,24 @@ public class NetworkHandler implements NetworkAccess, Runnable {
 	private Thread networkThread;
 	private Thread networkInputThread;
 
+	
+	/**
+	 * Beim Aufruf wird der Netzwerk-Thread, der zum Lesen des Input-Streams zustaendig ist, gestartet.
+	 * Wenn die connect-Methode aufgerufen wird, werden zwei Sockets (Control, Data) initialisert und eine Verbindung zum Server hergestellt.
+	 * @see easync.NetworkHandler#connect()
+	 */
 	public NetworkHandler() {
 		networkThread = new Thread(this);
 		networkThread.start();
 	}
-
+	
+	/**
+	 * Beim Aufruf wird der Netzwerk-Thread, der zum Lesen des Input-Streams zustaendig ist, gestartet.
+	 * Wird die connect-Methode aufgerufen, werden die uebergebenen Sockets benutzt.
+	 * 
+	 * @param controlSocket
+	 * @param dataSocket
+	 */
 	public NetworkHandler(Socket controlSocket, Socket dataSocket) {
 		this.controlSocket = controlSocket;
 		this.dataSocket = dataSocket;
@@ -40,6 +63,9 @@ public class NetworkHandler implements NetworkAccess, Runnable {
 		networkThread.start();
 	}
 
+	/**
+	 * Initialisiert den Input- und Output-Stream des Control-Sockets.
+	 */
 	private void initStreams() {
 		try {
 			if (input == null) {
@@ -71,14 +97,26 @@ public class NetworkHandler implements NetworkAccess, Runnable {
 		}
 	}
 	
+	
+	/**
+	 * Schreibt eine int-Zahl auf den control-stream.
+	 * 
+	 * @param number - Zahl, die uebertragen werden soll
+	 */
 	public void writeLine(int number) {
 		writeLine(""+number);
 	}
 	
+	/**
+	 * Schreibt eine long-Zahl auf den control-stream.
+	 * 
+	 * @param number - Zahl, die uebertragen werden soll
+	 */
 	public void writeLine(long number) {
 		writeLine(""+number);
 	}
 
+	@Override
 	public void connect() {
 		try {
 			if (controlSocket == null) {
@@ -135,6 +173,13 @@ public class NetworkHandler implements NetworkAccess, Runnable {
 
 	}
 
+	/**
+	 * Liefert die Position, bei der Datei- und Ordnername getrennt werden.
+	 * Position des ersten '/' oder '\' der von hinten im Dateipfad gefunden wird.
+	 * 
+	 * @param filepath - Dateipfad, der ueberprueft werden soll
+	 * @return Position des hintersten Trennzeichens 
+	 */
 	private int getFileSeparationPos(String filepath) {
 		int pos = filepath.lastIndexOf('/');
 		if(pos == -1)

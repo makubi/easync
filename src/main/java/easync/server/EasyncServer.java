@@ -5,6 +5,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
+
+/**
+ * Hauptklasse des Servers.
+ * Dieser kuemmert sich um den Verbindungsaufbau zwischen Server und Clients.
+ *
+ */
 public class EasyncServer {
 	private int port = 43443;
 	private ArrayList<ConnectionHandler> connectedSockets;
@@ -14,6 +20,10 @@ public class EasyncServer {
 		handleConnections();
 	}
 
+	/**
+	 * Kuemmert sich um die Verbindung mit neuen Clients und startet fuer jeden neu Verbundenen einen ConnectionHandler-Thread.
+	 * @see easync.server.ConnectionHandler
+	 */
 	private void handleConnections() {
 		try {
 			int i = 0;

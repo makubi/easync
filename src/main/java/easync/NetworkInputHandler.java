@@ -3,6 +3,10 @@ package easync;
 import java.io.BufferedReader;
 import java.io.IOException;
 
+/**
+ * Liest den Input-Stream des Control-Sockets und startet beispielsweise eine Methode zum Empfang einer Datei.
+ *
+ */
 public class NetworkInputHandler extends Thread {
 	
 	private NetworkAccess networkHandler;

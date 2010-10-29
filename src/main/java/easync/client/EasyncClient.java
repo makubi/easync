@@ -3,6 +3,10 @@ package easync.client;
 import easync.NetworkAccess;
 import easync.NetworkHandler;
 
+/**
+ * Hauptklasse des Clients.
+ *
+ */
 public class EasyncClient {
 
 	private NetworkAccess network;
