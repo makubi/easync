@@ -1,4 +1,4 @@
-package easync;
+package easync.network;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,16 +9,12 @@ import java.io.IOException;
  */
 public class NetworkInputHandler extends Thread {
 	
-	private NetworkAccess networkHandler;
+	private BufferedReader input;
+	private NetworkFileTransceiver networkFileTransceiver;
 	
-	public NetworkInputHandler(NetworkAccess networkHandler) {
-		this.networkHandler = networkHandler;
-	}
-
 	@Override
 	public void run() {
 		String line;
-		BufferedReader input = networkHandler.getInput();
 		try {
 			while((line = input.readLine()) != null) {
 				System.out.println(line);
@@ -27,7 +23,7 @@ public class NetworkInputHandler extends Thread {
 					String filepath = input.readLine();
 					int bufferSize = Integer.parseInt(input.readLine());
 					int chunks = Integer.parseInt(input.readLine());
-					networkHandler.receivingFile(filepath, bufferSize, chunks);
+					networkFileTransceiver.receivingFile(filepath, bufferSize, chunks);
 				}
 				/*
 				String[] data = line.split(":");
@@ -46,4 +42,16 @@ public class NetworkInputHandler extends Thread {
 			e.printStackTrace();
 		}
 	}
+
+	public void setInputStream(BufferedReader input) {
+		this.input = input;
+	}
+
+	public void setNetworkFileTransceiver(
+			NetworkFileTransceiver networkFileTransceiver) {
+		this.networkFileTransceiver = networkFileTransceiver;
+	}
+
+	
+	
 }

@@ -2,8 +2,7 @@ package easync.server;
 
 import java.net.Socket;
 
-import easync.NetworkAccess;
-import easync.NetworkHandler;
+import easync.network.NetworkHandler;
 
 /**
  * Diese Klasse kuemmert sich um die Kommunkation zwischen Server und jeweils eines Clients.
@@ -11,7 +10,7 @@ import easync.NetworkHandler;
  */
 public class ConnectionHandler implements Runnable {
 
-	private NetworkAccess network;
+	private NetworkHandler network;
 
 	/**
 	 * Startet einen Netzwerk-Thread und den Thread dieses Objekts.

@@ -1,4 +1,4 @@
-package easync;
+package easync.network;
 
 /**
  * Liste von Netzwerkkommandos.
