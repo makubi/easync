@@ -31,6 +31,7 @@ public class EasyncServer {
 			Socket controlSocket;
 			Socket dataSocket;
 			ConnectionHandler connectionHandler = null;
+			System.out.println("Easync-Server started on port "+port);
 			while(true) {
 				try {
 					controlSocket = serverSocket.accept();

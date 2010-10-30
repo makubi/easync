@@ -13,7 +13,7 @@ public class EasyncClient {
 	public EasyncClient() {
 		network = new NetworkHandler();
 		network.connect();
-		network.writeLine("Client: #1");
+		network.writeLine("Client says: Hello! :-)");
 		network.sendFile("/tmp/a");
 	}
 	

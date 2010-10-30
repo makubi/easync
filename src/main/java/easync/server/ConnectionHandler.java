@@ -28,7 +28,7 @@ public class ConnectionHandler implements Runnable {
 	public void run() {
 			try {
 				network.connect();
-				network.writeLine("Server: #1");
+				network.writeLine("Client-Handler on server-side says: Hello! :-)");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

@@ -8,6 +8,8 @@ import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import easync.client.EasyncClientConfig;
+
 
 /**
  * Implementierung der Netzwerkfaehigkeit.
@@ -20,8 +22,8 @@ import java.net.Socket;
  */
 public class NetworkHandler implements Runnable {
 
-	private String server = "localhost";
-	private int port = 43443;
+	private String server;
+	private int port;
 
 	private Socket controlSocket;
 	private Socket dataSocket;
@@ -39,7 +41,11 @@ public class NetworkHandler implements Runnable {
 	 * Wenn die connect-Methode aufgerufen wird, werden zwei Sockets (Control, Data) initialisert und eine Verbindung zum Server hergestellt.
 	 * @see easync.network.NetworkHandler#connect()
 	 */
-	public NetworkHandler() {}
+	public NetworkHandler() {
+		EasyncClientConfig config = new EasyncClientConfig();
+		server = config.getHost();
+		port = config.getPort();
+	}
 	
 	/**
 	 * Wird die connect-Methode aufgerufen, werden die uebergebenen Sockets benutzt.
@@ -50,6 +56,9 @@ public class NetworkHandler implements Runnable {
 	public NetworkHandler(Socket controlSocket, Socket dataSocket) {
 		this.controlSocket = controlSocket;
 		this.dataSocket = dataSocket;
+		
+		// TODO: Temporaer, bis Server-Config implementiert.
+		port = 43443;
 	}
 
 	/**
@@ -148,10 +157,8 @@ public class NetworkHandler implements Runnable {
 	 * 
 	 * @param line - Text, der geschrieben werden soll
 	 * 
-	 * @deprecated Dient nur noch als Verbindungsstueck, NetworkOutputHandler sollte direkt angesprochen werden.
 	 * @see easync.network.NetworkOutputHandler
 	 */
-	@Deprecated
 	public void writeLine(String line) {
 		networkOutputThread.writeLine(line);
 	}
@@ -161,10 +168,8 @@ public class NetworkHandler implements Runnable {
 	 * 
 	 * @param number - Zahl, die uebertragen werden soll
 	 * 
-	 * @deprecated Dient nur noch als Verbindungsstueck, NetworkOutputHandler sollte direkt angesprochen werden.
 	 * @see easync.network.NetworkOutputHandler
 	 */
-	@Deprecated
 	public void writeLine(int number) {
 		writeLine(""+number);
 	}
@@ -174,10 +179,8 @@ public class NetworkHandler implements Runnable {
 	 * 
 	 * @param number - Zahl, die uebertragen werden soll
 	 * 
-	 * @deprecated Dient nur noch als Verbindungsstueck, NetworkOutputHandler sollte direkt angesprochen werden.
 	 * @see easync.network.NetworkOutputHandler
 	 */
-	@Deprecated
 	public void writeLine(long number) {
 		writeLine(""+number);
 	}
@@ -187,7 +190,6 @@ public class NetworkHandler implements Runnable {
 	 * 
 	 * @param file - Datei, die uebertragen werden soll
 	 * 
-	 * @deprecated Dient nur noch als Verbindungsstueck, NetworkOutputHandler sollte direkt angesprochen werden.
 	 * @see easync.network.NetworkOutputHandler
 	 */
 	public void sendFile(String file) {

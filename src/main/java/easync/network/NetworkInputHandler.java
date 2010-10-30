@@ -10,7 +10,7 @@ import java.io.IOException;
 public class NetworkInputHandler extends Thread {
 	
 	private BufferedReader input;
-	private NetworkFileTransceiver networkFileTransceiver;
+	private FileTransceiverListener networkFileTransceiver;
 	
 	@Override
 	public void run() {
@@ -48,7 +48,7 @@ public class NetworkInputHandler extends Thread {
 	}
 
 	public void setNetworkFileTransceiver(
-			NetworkFileTransceiver networkFileTransceiver) {
+			FileTransceiverListener networkFileTransceiver) {
 		this.networkFileTransceiver = networkFileTransceiver;
 	}
 

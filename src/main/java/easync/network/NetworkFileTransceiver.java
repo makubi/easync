@@ -12,7 +12,7 @@ import java.net.Socket;
  * Kuemmert sich um den Dateiempfang und -versand.
  *
  */
-public class NetworkFileTransceiver {
+public class NetworkFileTransceiver implements FileTransceiverListener {
 	
 	private Socket dataSocket;
 	private NetworkOutputHandler networkOutputHandler;
@@ -24,6 +24,7 @@ public class NetworkFileTransceiver {
 	 * @param bufferSize - Groesse das Puffers
 	 * @param chunks - Datenteile
 	 */
+	@Override
 	public void receivingFile(String filepath, int bufferSize, int chunks) {
 		FileOutputStream fos = null;
 		BufferedInputStream bis = null;
@@ -67,6 +68,7 @@ public class NetworkFileTransceiver {
 	 * 
 	 * @param filepath - Pfad zur Datei, die gesendet werden soll
 	 */
+	@Override
 	public void sendFile(String filepath) {
 		FileInputStream fis = null;
 		BufferedOutputStream bos = null;
