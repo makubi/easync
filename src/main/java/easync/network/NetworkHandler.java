@@ -2,6 +2,7 @@ package easync.network;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -48,17 +49,19 @@ public class NetworkHandler implements Runnable {
 	}
 	
 	/**
+	 * Dieser Konstruktur wird vom Client-Handler auf der Server-Seite verwendet, da dieser schon initialisierte Sockets (siehe ServerSocket.accept()) erhaelt.
 	 * Wird die connect-Methode aufgerufen, werden die uebergebenen Sockets benutzt.
 	 * 
-	 * @param controlSocket
-	 * @param dataSocket
+	 * @param controlSocket - Socket fuer den Control-Stream
+	 * @param dataSocket - Socket fuer den Daten-Stream
+	 * 
+	 * @see easync.server.EasyncServer
+	 * @see java.net.ServerSocket#accept()
+	 * @see easync.network.NetworkHandler#connect()
 	 */
 	public NetworkHandler(Socket controlSocket, Socket dataSocket) {
 		this.controlSocket = controlSocket;
 		this.dataSocket = dataSocket;
-		
-		// TODO: Temporaer, bis Server-Config implementiert.
-		port = 43443;
 	}
 
 	/**
@@ -188,12 +191,21 @@ public class NetworkHandler implements Runnable {
 	/**
 	 * Sendet eine Datei an das Gegenueber.
 	 * 
-	 * @param file - Datei, die uebertragen werden soll
+	 * @param file - Dateiname der Datei, die uebertragen werden soll
 	 * 
 	 * @see easync.network.NetworkOutputHandler
 	 */
 	public void sendFile(String file) {
 		networkFileTransceiver.sendFile(file);
+	}
+
+	/**
+	 * Sendet eine Datei an das Gegenueber.
+	 * 
+	 * @param file - Datei, die uebertragen werden soll
+	 */
+	public void sendFile(File file) {
+		sendFile(file.getAbsolutePath());
 	}
 
 }

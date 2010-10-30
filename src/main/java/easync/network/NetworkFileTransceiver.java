@@ -17,13 +17,6 @@ public class NetworkFileTransceiver implements FileTransceiverListener {
 	private Socket dataSocket;
 	private NetworkOutputHandler networkOutputHandler;
 	
-	/**
-	 * Startet den Empfang einer Datei am Data-Stream.
-	 * 
-	 * @param filepath - Dateipfad (Ordner/Dateiname)
-	 * @param bufferSize - Groesse das Puffers
-	 * @param chunks - Datenteile
-	 */
 	@Override
 	public void receivingFile(String filepath, int bufferSize, int chunks) {
 		FileOutputStream fos = null;
@@ -52,22 +45,11 @@ public class NetworkFileTransceiver implements FileTransceiverListener {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				fos.close();
-				bis.close();
-				// TODO: Close streams
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			NetworkHelper.closeStream(fos);
+			NetworkHelper.closeStream(bis);
 		}
-
 	}
 	
-	/**
-	 * Sendet eine Datei ueber das Netzwerk.
-	 * 
-	 * @param filepath - Pfad zur Datei, die gesendet werden soll
-	 */
 	@Override
 	public void sendFile(String filepath) {
 		FileInputStream fis = null;
@@ -101,13 +83,8 @@ public class NetworkFileTransceiver implements FileTransceiverListener {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				fis.close();
-				bos.close();
-				// TODO: Close streams
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			NetworkHelper.closeStream(fis);
+			NetworkHelper.closeStream(bos);
 		}
 	}
 	

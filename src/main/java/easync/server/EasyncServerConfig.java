@@ -1,4 +1,4 @@
-package easync.client;
+package easync.server;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,25 +11,23 @@ import easync.network.NetworkHelper;
 
 /**
  * Stellt Konfigurationsparameter des Clients zur Verfuegung.
- * 
+ *
  */
-public class EasyncClientConfig extends EasyncConfig {
+public class EasyncServerConfig extends EasyncConfig {
 
 	private final File configFile = new File(configDir.getAbsolutePath()
-			+ File.separator + "client.conf");
-
-	private String host = "localhost";
-
+			+ File.separator + "server.conf");
+	
 	/**
 	 * Laedt die Konfiguration und erstellt vorher eine Neue, falls nicht vorhanden.
 	 */
-	public EasyncClientConfig() {
+	public EasyncServerConfig() {
 		if (!configFile.exists()) {
 			initNewConfig();
 		}
 		loadProperties();
 	}
-
+	
 	/**
 	 * Laedt Properties, die gefunden werden.
 	 */
@@ -39,10 +37,6 @@ public class EasyncClientConfig extends EasyncConfig {
 			inStream = new FileInputStream(configFile);
 
 			properties.load(inStream);
-
-			if (properties.containsKey("host")) {
-				host = properties.getProperty("host");
-			}
 
 			if (properties.containsKey("port")) {
 				port = Integer.parseInt(properties.getProperty("port"));
@@ -69,10 +63,8 @@ public class EasyncClientConfig extends EasyncConfig {
 			}
 			configFile.createNewFile();
 			outStream = new FileOutputStream(configFile);
-			properties.put("host", host);
 			properties.put("port", "" + port);
 			properties.store(outStream, "Automatically created  config.");
-			outStream.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -83,26 +75,10 @@ public class EasyncClientConfig extends EasyncConfig {
 			NetworkHelper.closeStream(outStream);
 		}
 	}
-
-	/**
-	 * Liefert den verwendeten Hostnamen oder IP-Adresse.
-	 * @return Verwendeter Host
-	 */
-	public String getHost() {
-		return host;
-	}
-
-	/**
-	 * Setzt den zu verwendeten Hostname oder die zu verwendente IP-Adresse und speicherte diesen Wert in die Properties-Datei.
-	 * @param host - Host, der verwendet werden soll
-	 */
-	public void setHost(String host) {
-		this.host = host;
-		putProperty("host", host);
-	}
-
+	
 	@Override
 	protected File getConfigFile() {
 		return configFile;
 	}
+
 }

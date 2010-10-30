@@ -12,10 +12,13 @@ import java.util.ArrayList;
  *
  */
 public class EasyncServer {
-	private int port = 43443;
+	private int port;
 	private ArrayList<ConnectionHandler> connectedSockets;
 	
 	public EasyncServer() {
+		EasyncServerConfig config = new EasyncServerConfig();
+		port = config.getPort();
+		
 		connectedSockets = new ArrayList<ConnectionHandler>();
 		handleConnections();
 	}
