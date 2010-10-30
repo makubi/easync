@@ -63,7 +63,7 @@ public class EasyncClientConfig extends EasyncConfig {
 			outStream = new FileOutputStream(configFile);
 			properties.put("host", host);
 			properties.put("port", "" + port);
-			properties.store(outStream, "Automatically created inital config.");
+			properties.store(outStream, "Automatically created  config.");
 			outStream.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -81,6 +81,7 @@ public class EasyncClientConfig extends EasyncConfig {
 		try {
 			outStream = new FileOutputStream(configFile);
 			properties.put(property, value);
+			properties.store(outStream, "Automatically created config.");
 			outStream.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
