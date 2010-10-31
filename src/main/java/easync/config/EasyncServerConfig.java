@@ -1,4 +1,4 @@
-package easync.server;
+package easync.config;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import easync.EasyncConfig;
 import easync.network.NetworkHelper;
 
 /**
@@ -18,6 +17,8 @@ public class EasyncServerConfig extends EasyncConfig {
 	private final File configFile = new File(configDir.getAbsolutePath()
 			+ File.separator + "server.conf");
 	
+	private File workDir = new File(System.getProperty("user.home")+File.separator+"EaSync");
+
 	/**
 	 * Laedt die Konfiguration und erstellt vorher eine Neue, falls nicht vorhanden.
 	 */
@@ -41,6 +42,11 @@ public class EasyncServerConfig extends EasyncConfig {
 			if (properties.containsKey("port")) {
 				port = Integer.parseInt(properties.getProperty("port"));
 			}
+			
+			if(properties.containsKey("workDir")) {
+				workDir = new File(properties.getProperty("workDir"));
+			}
+			
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -64,6 +70,7 @@ public class EasyncServerConfig extends EasyncConfig {
 			configFile.createNewFile();
 			outStream = new FileOutputStream(configFile);
 			properties.put("port", "" + port);
+			properties.put("workDir", workDir.getAbsolutePath());
 			properties.store(outStream, "Automatically created  config.");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -74,6 +81,18 @@ public class EasyncServerConfig extends EasyncConfig {
 		} finally {
 			NetworkHelper.closeStream(outStream);
 		}
+	}
+	
+	public String getWorkDir() {
+		if(!workDir.exists()) {
+			workDir.mkdirs();
+		}
+		return workDir.getAbsolutePath();
+	}
+
+	public void setWorkDir(String workDir) {
+		this.workDir = new File(workDir);
+		putProperty("workDir", workDir);
 	}
 	
 	@Override

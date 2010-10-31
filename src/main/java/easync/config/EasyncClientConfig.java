@@ -1,4 +1,4 @@
-package easync.client;
+package easync.config;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import easync.EasyncConfig;
 import easync.network.NetworkHelper;
 
 /**
@@ -19,6 +18,7 @@ public class EasyncClientConfig extends EasyncConfig {
 			+ File.separator + "client.conf");
 
 	private String host = "localhost";
+	private File syncFolder = new File(System.getProperty("user.home")+File.separator+"EaSync");
 
 	/**
 	 * Laedt die Konfiguration und erstellt vorher eine Neue, falls nicht vorhanden.
@@ -47,6 +47,10 @@ public class EasyncClientConfig extends EasyncConfig {
 			if (properties.containsKey("port")) {
 				port = Integer.parseInt(properties.getProperty("port"));
 			}
+			
+			if(properties.containsKey("syncFolder")) {
+				syncFolder = new File(properties.getProperty("syncFolder"));
+			}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -71,8 +75,8 @@ public class EasyncClientConfig extends EasyncConfig {
 			outStream = new FileOutputStream(configFile);
 			properties.put("host", host);
 			properties.put("port", "" + port);
+			properties.put("syncFolder", syncFolder.getAbsolutePath());
 			properties.store(outStream, "Automatically created  config.");
-			outStream.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -104,5 +108,17 @@ public class EasyncClientConfig extends EasyncConfig {
 	@Override
 	protected File getConfigFile() {
 		return configFile;
+	}
+
+	public void setSyncFolder(String syncFolder) {
+		this.syncFolder = new File(syncFolder);
+		putProperty("syncFolder", syncFolder);
+	}
+
+	public String getSyncFolder() {
+		if(!syncFolder.exists()) {
+			syncFolder.mkdirs();
+		}
+		return syncFolder.getAbsolutePath();
 	}
 }

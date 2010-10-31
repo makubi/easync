@@ -1,4 +1,4 @@
-package easync;
+package easync.config;
 
 import java.io.File;
 import java.io.FileNotFoundException;

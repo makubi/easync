@@ -25,18 +25,6 @@ public class NetworkInputHandler extends Thread {
 					int chunks = Integer.parseInt(input.readLine());
 					networkFileTransceiver.receivingFile(filepath, bufferSize, chunks);
 				}
-				/*
-				String[] data = line.split(":");
-				String command = data[0];
-				String status = null;
-				String message = null;
-				
-				if(data.length > 1)
-					status = data[1];
-				
-				if(data.length > 2)
-					message = data[2];
-				*/
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -1,5 +1,4 @@
-package easync.server;
-
+package easync.config;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.AfterClass;
@@ -7,29 +6,34 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class EasyncServerConfigTest {
+import easync.config.EasyncClientConfig;
 
-	private EasyncServerConfig properties;
 
+
+public class EasyncConfigTest {
+	
+	private EasyncClientConfig properties;
+	
 	private static int port;
 
 	@BeforeClass
 	public static void setUpClass() {
-		EasyncServerConfig properties = new EasyncServerConfig();
+		EasyncClientConfig properties = new EasyncClientConfig();
 		port = properties.getPort();
 	}
 	
 	@Before
 	public void setUp() {
-		properties = new EasyncServerConfig();
+		properties = new EasyncClientConfig();
+		properties.setPort(port);
 	}
 	
 	@AfterClass
 	public static void tearDownClass() {
-		EasyncServerConfig properties = new EasyncServerConfig();
+		EasyncClientConfig properties = new EasyncClientConfig();
 		properties.setPort(port);
 	}
-
+	
 	@Test
 	public void testPutValidPort() {
 		int value = 50000;
@@ -44,4 +48,8 @@ public class EasyncServerConfigTest {
 		assertEquals(port, properties.getPort());
 	}
 	
+	@Test
+	public void testGetPort() {
+		assertEquals(port, properties.getPort());
+	}
 }

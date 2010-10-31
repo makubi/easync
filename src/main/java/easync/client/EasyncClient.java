@@ -16,12 +16,27 @@ public class EasyncClient {
 	public EasyncClient() {
 		network = new NetworkHandler();
 		network.connect();
-		network.writeLine("Client says: Hello! :-)");
+		
+		writeLine("Client says: Hello! :-)");
+		
+		File tmpFile = new File("/bin/bash");
 		try {
-			network.sendFile(File.createTempFile("easync_tmp", null));
+			tmpFile = File.createTempFile("easync_tmp", null);
 		} catch (IOException e) {
-			e.printStackTrace();
 		}
+		sendFile(tmpFile);
+	}
+	
+	public void writeLine(String line) {
+		network.writeLine(line);
+	}
+	
+	public void sendFile(String filename) {
+		network.sendFile(filename);
+	}
+	
+	public void sendFile(File file) {
+		sendFile(file.getAbsolutePath());
 	}
 	
 	public static void main(String[] args) {
