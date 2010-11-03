@@ -24,17 +24,23 @@ public class EasyncClient {
 			tmpFile = File.createTempFile("easync_tmp", null);
 		} catch (IOException e) {
 		}
-		sendFile(tmpFile);
+		transmitFile(tmpFile.getAbsolutePath());
 	}
 	
 	public void writeLine(String line) {
 		network.writeLine(line);
 	}
 	
+	public void transmitFile(String filepath) {
+		network.transmitFile(filepath);
+	}
+	
+	@Deprecated
 	public void sendFile(String filename) {
 		network.sendFile(filename);
 	}
 	
+	@Deprecated
 	public void sendFile(File file) {
 		sendFile(file.getAbsolutePath());
 	}

@@ -40,6 +40,7 @@ public class EasyncServer {
 			while(true) {
 				try {
 					controlSocket = serverSocket.accept();
+					// TODO: Pruefen, ob das zweite Socket auch vom selben Client, wie das Erste, akzeptiert wurde, falls die Anfrage nach dem ersten serverSocket.accept() abgebrochen wird.
 					dataSocket = serverSocket.accept();
 					connectionHandler = new ConnectionHandler(controlSocket, dataSocket);
 					connectedSockets.add(connectionHandler);

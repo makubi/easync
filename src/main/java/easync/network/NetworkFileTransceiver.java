@@ -7,6 +7,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import easync.filehandling.NetworkFile;
+
 /**
  * Kuemmert sich um den Dateiempfang und -versand.
  *
@@ -54,6 +56,7 @@ public class NetworkFileTransceiver implements FileTransceiverListener {
 	}
 	
 	@Override
+	@Deprecated
 	public synchronized void sendFile(String filepath) {
 		FileInputStream fis = null;
 		try {
@@ -72,6 +75,39 @@ public class NetworkFileTransceiver implements FileTransceiverListener {
 
 			networkOutputHandler.writeLine(NetworkCommands.CMD_SEND_FILE);
 			
+			String transmittedFilepath = getTransmittedFilepath(filepath);
+			
+			networkOutputHandler.writeLine(transmittedFilepath);
+			networkOutputHandler.writeLine(bufferSize);
+			networkOutputHandler.writeLine(chunks);
+
+			int len;
+			while ((len = fis.read(buffer)) != -1) {
+				dataOutput.write(buffer, 0, len);
+				dataOutput.flush();
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			NetworkHelper.closeStream(fis);
+		}
+	}
+	
+	@Override
+	public void transmitFile(NetworkFile networkFile) {
+		FileInputStream fis = null;
+		try {
+			String filepath = networkFile.getPath();
+			int bufferSize = networkFile.getBufferSize();
+			long chunks = networkFile.getChunks();
+			
+			File file = new File(filepath);
+			fis = new FileInputStream(file);
+			
+			networkOutputHandler.writeLine(NetworkCommands.CMD_SEND_FILE);
+
+			byte[] buffer = new byte[bufferSize];
 			String transmittedFilepath = getTransmittedFilepath(filepath);
 			
 			networkOutputHandler.writeLine(transmittedFilepath);
@@ -141,6 +177,5 @@ public class NetworkFileTransceiver implements FileTransceiverListener {
 	public void setSyncFolder(String syncFolder) {
 		this.syncFolder = syncFolder;
 	}
-
 	
 }

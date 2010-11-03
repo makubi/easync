@@ -5,6 +5,7 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -13,6 +14,10 @@ import java.net.Socket;
 
 import easync.config.EasyncClientConfig;
 import easync.config.EasyncServerConfig;
+import easync.filehandling.FileQueue;
+import easync.filehandling.FileSendingQueue;
+import easync.filehandling.NetworkFile;
+import easync.filehandling.NetworkFileQueueHandler;
 
 /**
  * Implementierung der Netzwerkfaehigkeit. Diese Klasse kuemmert sich um die
@@ -38,6 +43,8 @@ public class NetworkHandler implements Runnable {
 	private BufferedInputStream dataInput;
 	private BufferedOutputStream dataOutput;
 
+	private FileQueue fileQueue;
+	private NetworkFileQueueHandler networkFileQueueHandler;
 	private NetworkFileTransceiver networkFileTransceiver;
 
 	private NetworkOutputHandler networkOutputThread;
@@ -124,6 +131,7 @@ public class NetworkHandler implements Runnable {
 			wireNetworkFileTransceiver();
 			wireInputHandler();
 			wireOutputHandler();
+			wireNetworkFileQueueHandler();
 
 			startNetworkThreads();
 		} catch (IOException e) {
@@ -156,12 +164,19 @@ public class NetworkHandler implements Runnable {
 		networkOutputThread.setOutputStream(output);
 	}
 
+	private void wireNetworkFileQueueHandler() {
+		networkFileQueueHandler
+				.setNetworkFileTransceiver(networkFileTransceiver);
+		networkFileQueueHandler.setFileQueue(fileQueue);
+	}
+
 	/**
 	 * Startet den Netzwerk-Input- und Output-Thread.
 	 */
 	private void startNetworkThreads() {
 		networkInputThread.start();
 		networkOutputThread.start();
+		networkFileQueueHandler.start();
 	}
 
 	/**
@@ -172,6 +187,8 @@ public class NetworkHandler implements Runnable {
 		networkFileTransceiver = new NetworkFileTransceiver();
 		networkInputThread = new NetworkInputHandler();
 		networkOutputThread = new NetworkOutputHandler();
+		networkFileQueueHandler = new NetworkFileQueueHandler();
+		fileQueue = new FileSendingQueue();
 	}
 
 	@Override
@@ -222,8 +239,23 @@ public class NetworkHandler implements Runnable {
 	 * 
 	 * @see easync.network.NetworkOutputHandler
 	 */
+	@Deprecated
 	public void sendFile(String file) {
 		networkFileTransceiver.sendFile(file);
+	}
+
+	public void transmitFile(String filepath) {
+		NetworkFile file = new NetworkFile();
+		file.setPath(filepath);
+		try {
+			fileQueue.addFileToQueue(file);
+			synchronized (networkFileQueueHandler) {
+				networkFileQueueHandler.notify();
+			}
+		} catch (FileNotFoundException e) {
+			// TODO: Handle exception.
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -232,6 +264,7 @@ public class NetworkHandler implements Runnable {
 	 * @param file
 	 *            - Datei, die uebertragen werden soll
 	 */
+	@Deprecated
 	public void sendFile(File file) {
 		sendFile(file.getAbsolutePath());
 	}

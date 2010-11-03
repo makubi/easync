@@ -1,5 +1,7 @@
 package easync.network;
 
+import easync.filehandling.NetworkFile;
+
 public interface FileTransceiverListener {
 	
 	/**
@@ -15,6 +17,14 @@ public interface FileTransceiverListener {
 	 * Sendet eine Datei ueber das Netzwerk.
 	 * 
 	 * @param filepath - Pfad zur Datei, die gesendet werden soll
+	 * @deprecated Use {@link FileTransceiverListener}{@link #transmitFile(NetworkFile)} instead.
 	 */
+	@Deprecated
 	public void sendFile(String filepath);
+	
+	/**
+	 * Transmits a file over the network.
+	 * @param networkFile - NetworkFile to be sent
+	 */
+	public void transmitFile(NetworkFile networkFile);
 }
