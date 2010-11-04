@@ -6,16 +6,20 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import easync.config.EasyncClientConfig;
+import easync.config.EasyncClientConfigTest;
 import easync.config.EasyncServerConfig;
 import easync.server.EasyncServer;
 @Ignore
 public class EasyncClientTest {
+	
+	private final static Logger LOGGER = Logger.getLogger(EasyncClientTest.class);
 		
 	private final static String host = "localhost";
 	private final static int port = 43443;
@@ -44,7 +48,7 @@ public class EasyncClientTest {
 		try {
 			tempFile = File.createTempFile("easync_tmp", null);
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error(e);
 		}
 	}
 	

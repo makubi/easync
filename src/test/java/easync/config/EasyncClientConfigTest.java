@@ -6,6 +6,7 @@ import java.io.File;
 
 import javax.security.auth.DestroyFailedException;
 
+import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -14,6 +15,8 @@ import org.junit.Test;
 
 public class EasyncClientConfigTest {
 
+	private final static Logger LOGGER = Logger.getLogger(EasyncClientConfigTest.class);
+	
 	private EasyncClientConfig properties;
 
 	private static String host;
@@ -47,7 +50,9 @@ public class EasyncClientConfigTest {
 			if(!tmpSyncDir.delete()) {
 				try {
 					throw new DestroyFailedException("Could not delete folder "+tmpSyncDir.getAbsolutePath());
-				} catch (DestroyFailedException e) {}
+				} catch (DestroyFailedException e) {
+					LOGGER.error(e);
+				}
 			}
 		}
 	}

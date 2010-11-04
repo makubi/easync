@@ -12,7 +12,7 @@ public class NetworkFile {
 	private File file;
 	private int bufferSize = 512;
 	private long chunks;
-	private long LeftoverBytes;
+	private long leftoverBytes;
 	
 	/**
 	 * Returns the path of the file that should be transmitted.
@@ -66,10 +66,10 @@ public class NetworkFile {
 
 	/**
 	 * Sets the number of tail bytes. These are the bytes that are the leftovers from filesize%buffer size.
-	 * @param LeftoverBytes - Size of leftover bytes
+	 * @param leftoverBytes - Size of leftover bytes
 	 */
-	public void setLeftoverBytes(long LeftoverBytes) {
-		this.LeftoverBytes = LeftoverBytes;
+	public void setLeftoverBytes(long leftoverBytes) {
+		this.leftoverBytes = leftoverBytes;
 	}
 
 	/**
@@ -77,6 +77,6 @@ public class NetworkFile {
 	 * @return Number of leftover bytes
 	 */
 	public long getLeftoverBytes() {
-		return LeftoverBytes;
+		return leftoverBytes;
 	}
 }
