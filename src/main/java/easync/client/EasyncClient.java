@@ -1,6 +1,7 @@
 package easync.client;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import easync.network.NetworkHandler;
@@ -25,6 +26,8 @@ public class EasyncClient {
 		} catch (IOException e) {
 		}
 		transmitFile(tmpFile.getAbsolutePath());
+		transmitFile("test_file");
+		transmitFile("test_file2");
 	}
 	
 	public void writeLine(String line) {
@@ -32,17 +35,12 @@ public class EasyncClient {
 	}
 	
 	public void transmitFile(String filepath) {
-		network.transmitFile(filepath);
-	}
-	
-	@Deprecated
-	public void sendFile(String filename) {
-		network.sendFile(filename);
-	}
-	
-	@Deprecated
-	public void sendFile(File file) {
-		sendFile(file.getAbsolutePath());
+		try {
+			network.transmitFile(filepath);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public static void main(String[] args) {

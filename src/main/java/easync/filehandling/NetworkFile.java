@@ -1,30 +1,33 @@
 package easync.filehandling;
 
+import java.io.File;
+
 /**
  * Represents a file that is to be sent over the network.
  * First, you need to set the path and then you have to added that object to a queue.
- * The queue should take care of calculating the missing parameters, number of chunks and optionally buffer-size. 
+ * The queue should take care of calculating the missing parameters, number of chunks, the bytes that are leftover from file.size%buffer.size and optionally buffer-size. 
  */
 public class NetworkFile {
 	
-	private String path;
+	private File file;
 	private int bufferSize = 512;
 	private long chunks;
+	private long LeftoverBytes;
 	
 	/**
 	 * Returns the path of the file that should be transmitted.
 	 * @return Path of the file that should be transmitted
 	 */
-	public String getPath() {
-		return path;
+	public File getFile() {
+		return file;
 	}
 	
 	/**
 	 * Sets the path of the file that should be transmitted. After that, normally the NetworkFile should be add to the related queue.
 	 * @param path - Path of the file that should be transmitted
 	 */
-	public void setPath(String path) {
-		this.path = path;
+	public void setFile(File file) {
+		this.file = file;
 	}
 	
 	/**
@@ -60,5 +63,20 @@ public class NetworkFile {
 	public void setChunks(long chunks) {
 		this.chunks = chunks;
 	}
-	
+
+	/**
+	 * Sets the number of tail bytes. These are the bytes that are the leftovers from filesize%buffer size.
+	 * @param LeftoverBytes - Size of leftover bytes
+	 */
+	public void setLeftoverBytes(long LeftoverBytes) {
+		this.LeftoverBytes = LeftoverBytes;
+	}
+
+	/**
+	 * Returns the number of tail bytes. These are the bytes that do not fit to filesize%buffer size.
+	 * @return Number of leftover bytes
+	 */
+	public long getLeftoverBytes() {
+		return LeftoverBytes;
+	}
 }

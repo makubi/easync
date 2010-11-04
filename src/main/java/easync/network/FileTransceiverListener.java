@@ -11,16 +11,7 @@ public interface FileTransceiverListener {
 	 * @param bufferSize - Size of the buffer
 	 * @param chunks - Parts of data
 	 */
-	public void receivingFile(String filepath, int bufferSize, int chunks);
-	
-	/**
-	 * Sends a file over the network.
-	 * 
-	 * @param filepath - Path to file that should be sent.
-	 * @deprecated Use {@link FileTransceiverListener}{@link #transmitFile(NetworkFile)} instead.
-	 */
-	@Deprecated
-	public void sendFile(String filepath);
+	public void receivingFile(String filepath, int bufferSize, int chunks, int leftoverBytes);
 	
 	/**
 	 * Transmits a file over the network.

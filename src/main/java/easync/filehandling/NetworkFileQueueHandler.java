@@ -1,17 +1,21 @@
 package easync.filehandling;
 
+import java.util.concurrent.BlockingQueue;
+
 import easync.network.NetworkFileTransceiver;
 
 /**
- * This class cares about sending a file over the network, if a {@link NetworkFile} is found in the queue.
- * It uses a thread that is paused, after an element is retrieved from the queue. If an element is added to the queue, this thread has to be unpaused.  *
+ * This class cares about sending a file over the network, if a
+ * {@link NetworkFile} is found in the queue. It uses a thread that is paused,
+ * after an element is retrieved from the queue. If an element is added to the
+ * queue, this thread has to be unpaused. *
  */
 public class NetworkFileQueueHandler extends Thread {
 
-	private FileQueue queue;
+	private BlockingQueue<NetworkFile> queue;
 	private NetworkFileTransceiver networkFileTransceiver;
 
-	public void setFileQueue(FileQueue queue) {
+	public void setFileQueue(BlockingQueue<NetworkFile> queue) {
 		this.queue = queue;
 	}
 
@@ -24,15 +28,12 @@ public class NetworkFileQueueHandler extends Thread {
 	public void run() {
 		while (true) {
 			try {
-				synchronized (this) {
-					wait();
-					System.out.println("Queue sending file! :-)");
-					networkFileTransceiver.transmitFile(queue.getNextNetworkFile());
-				}
+				networkFileTransceiver.transmitFile(queue.take());
+				System.out.println("Queue sending file! :-)");
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			
+
 		}
 	}
 

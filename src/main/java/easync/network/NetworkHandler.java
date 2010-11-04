@@ -12,18 +12,19 @@ import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import easync.config.EasyncClientConfig;
 import easync.config.EasyncServerConfig;
-import easync.filehandling.FileQueue;
-import easync.filehandling.FileSendingQueue;
 import easync.filehandling.NetworkFile;
+import easync.filehandling.NetworkFileCalculator;
 import easync.filehandling.NetworkFileQueueHandler;
 
 /**
- * Implementation of the network capability.
- * This class takes care of the communication between server and client.
- * The reading and writing on the streams are done in separate classes.
+ * Implementation of the network capability. This class takes care of the
+ * communication between server and client. The reading and writing on the
+ * streams are done in separate classes.
  * 
  * @see easync.network.NetworkInputHandler
  * @see easync.network.NetworkOutputHandler
@@ -43,7 +44,8 @@ public class NetworkHandler implements Runnable {
 	private BufferedInputStream dataInput;
 	private BufferedOutputStream dataOutput;
 
-	private FileQueue fileQueue;
+	private BlockingQueue<NetworkFile> fileQueue;
+	private NetworkFileCalculator calculator;
 	private NetworkFileQueueHandler networkFileQueueHandler;
 	private NetworkFileTransceiver networkFileTransceiver;
 
@@ -51,7 +53,8 @@ public class NetworkHandler implements Runnable {
 	private NetworkInputHandler networkInputThread;
 
 	/**
-	 * If the connect method is called, two sockets (control, data) are initialized and a connection to the server is established.
+	 * If the connect method is called, two sockets (control, data) are
+	 * initialized and a connection to the server is established.
 	 * 
 	 * @see easync.network.NetworkHandler#connect()
 	 */
@@ -63,8 +66,10 @@ public class NetworkHandler implements Runnable {
 	}
 
 	/**
-	 * This constructor is used by the server-side client handler, because it gets already initialized sockets (see {@link ServerSocket#accept()}.
-	 * If the connect method is called, these sockets are used. 
+	 * This constructor is used by the server-side client handler, because it
+	 * gets already initialized sockets (see {@link ServerSocket#accept()}. If
+	 * the connect method is called, these sockets are used.
+	 * 
 	 * @param controlSocket
 	 *            - Socket for the control stream
 	 * @param dataSocket
@@ -121,6 +126,7 @@ public class NetworkHandler implements Runnable {
 			dataOutput = new BufferedOutputStream(dataSocket.getOutputStream());
 
 			initNetworkHandler();
+			initQueue();
 
 			wireNetworkFileTransceiver();
 			wireInputHandler();
@@ -173,15 +179,20 @@ public class NetworkHandler implements Runnable {
 		networkFileQueueHandler.start();
 	}
 
+	private void initQueue() {
+		fileQueue = new LinkedBlockingQueue<NetworkFile>();
+		calculator = new NetworkFileCalculator();
+	}
+
 	/**
-	 * Initializes the NetworkTransceiver, NetworkInputHandler, NetworkOutputHandler, NetworkFileQueueHandler and the FileQueue.
+	 * Initializes the NetworkTransceiver, NetworkInputHandler,
+	 * NetworkOutputHandler, NetworkFileQueueHandler and the FileQueue.
 	 */
 	private void initNetworkHandler() {
 		networkFileTransceiver = new NetworkFileTransceiver();
 		networkInputThread = new NetworkInputHandler();
 		networkOutputThread = new NetworkOutputHandler();
 		networkFileQueueHandler = new NetworkFileQueueHandler();
-		fileQueue = new FileSendingQueue();
 	}
 
 	@Override
@@ -205,7 +216,7 @@ public class NetworkHandler implements Runnable {
 	 * 
 	 * @param number
 	 *            - Number that should be sent
-	 *
+	 * 
 	 * @see easync.network.NetworkOutputHandler
 	 */
 	public void writeLine(int number) {
@@ -217,7 +228,7 @@ public class NetworkHandler implements Runnable {
 	 * 
 	 * @param number
 	 *            - Number that should be sent
-	 *
+	 * 
 	 * @see easync.network.NetworkOutputHandler
 	 */
 	public void writeLine(long number) {
@@ -225,49 +236,40 @@ public class NetworkHandler implements Runnable {
 	}
 
 	/**
-	 * Sends a file to the vis-a-vis.
+	 * Transmits a file to the vis-a-vis. In fact, it adds the File to a queue
+	 * to be transmitted. Before doing that, it checks the filepath. If the file
+	 * can't be found there, a FileNotFoundException is thrown.
 	 * 
-	 * @param file
-	 *            - Name of the file that should be sent
-	 *            
-	 * @deprecated See {@link NetworkHandler#transmitFile}
-	 * @see easync.network.NetworkOutputHandler
+	 * @param filepath
+	 *            - Path to the file that should be sent
+	 * @throws FileNotFoundException
 	 */
-	@Deprecated
-	public void sendFile(String file) {
-		networkFileTransceiver.sendFile(file);
-	}
+	public void transmitFile(String filepath) throws FileNotFoundException {
+		NetworkFile networkFile = new NetworkFile();
+		File file = new File(getFullFilepath(filepath));
 
-	/**
-	 * Transmits a file to the vis-a-vis.
-	 * 
-	 * @param filepath - Path to the file that should be sent
-	 */
-	public void transmitFile(String filepath) {
-		NetworkFile file = new NetworkFile();
-		file.setPath(filepath);
-		try {
-			fileQueue.addFileToQueue(file);
-			synchronized (networkFileQueueHandler) {
-				networkFileQueueHandler.notify();
-			}
-		} catch (FileNotFoundException e) {
-			// TODO: Handle exception.
-			e.printStackTrace();
+		// Tests, if the file related to the path does exist.
+		if (!file.exists()) {
+			throw new FileNotFoundException();
 		}
+
+		networkFile.setFile(file);
+		
+		calculator.calculateNetworkFileParams(networkFile);
+		fileQueue.add(networkFile);
 	}
 
 	/**
-	 * Sents a file to the vis-a-vis.
+	 * Checks, if the file path was given relatively to the sync folder and adds
+	 * it, if this applies.
 	 * 
-	 * @param file
-	 *            - File that should be sent
-	 * 
-	 * @deprecated See {@link NetworkHandler#transmitFile}
+	 * @param filepath
+	 *            - Path to the file that should be checked
+	 * @return Full file path
 	 */
-	@Deprecated
-	public void sendFile(File file) {
-		sendFile(file.getAbsolutePath());
+	private String getFullFilepath(String filepath) {
+		return !filepath.startsWith(File.separator) ? filepath = syncFolder
+				+ File.separator + filepath : filepath;
 	}
 
 }

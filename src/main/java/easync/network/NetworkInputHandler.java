@@ -16,13 +16,14 @@ public class NetworkInputHandler extends Thread {
 		String line;
 		try {
 			while((line = input.readLine()) != null) {
-				System.out.println(line);
+				System.out.println("Received command: "+line);
 				
 				if(line.equals(NetworkCommands.CMD_SEND_FILE)) {
 					String filepath = input.readLine();
 					int bufferSize = Integer.parseInt(input.readLine());
 					int chunks = Integer.parseInt(input.readLine());
-					networkFileTransceiver.receivingFile(filepath, bufferSize, chunks);
+					int leftoverBytes = Integer.parseInt(input.readLine());
+					networkFileTransceiver.receivingFile(filepath, bufferSize, chunks, leftoverBytes);
 				}
 			}
 		} catch (IOException e) {

@@ -50,7 +50,7 @@ public class EasyncClientTest {
 	
 	@Test
 	public void testSendFile() {
-		client.sendFile(tempFile.getAbsolutePath());
+		client.transmitFile(tempFile.getAbsolutePath());
 		Assert.assertTrue(new File(clientSyncDir+File.separator+tempFile.getName()).exists());
 	}
 

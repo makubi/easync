@@ -24,7 +24,7 @@ public class NetworkFileTransceiver implements FileTransceiverListener {
 	// Race-Conditions (und synchronized-Bloecke) zu vermeiden.
 	
 	@Override
-	public synchronized void receivingFile(String filepath, int bufferSize, int chunks) {
+	public synchronized void receivingFile(String filepath, int bufferSize, int chunks, int leftoverBytes) {
 		FileOutputStream fos = null;
 		try {
 			int dirFileSeparationPos = getFileSeparationPos(filepath);
@@ -39,79 +39,49 @@ public class NetworkFileTransceiver implements FileTransceiverListener {
 			File file = new File(dir.getAbsolutePath() + File.separator + filename);
 			file.createNewFile();
 			fos = new FileOutputStream(file);
-
+			
 			byte[] buffer = new byte[bufferSize];
-
+			
+			// Reads the chunks.
 			for (int i = 0; i < chunks; i++) {
 				int len = dataInput.read(buffer);
 				fos.write(buffer, 0, len);
 				fos.flush();
 			}
+			
+			// Reads the leftover bytes.
+			buffer = new byte[leftoverBytes];
+			int len = dataInput.read(buffer);
+			fos.write(buffer, 0, len);
+			fos.flush();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
 			NetworkHelper.closeStream(fos);
 		}
 	}
-	
-	@Override
-	@Deprecated
-	public synchronized void sendFile(String filepath) {
-		FileInputStream fis = null;
-		try {
-			int bufferSize = 512;
-			
-			filepath = getFullFilepath(filepath);
-						
-			File file = new File(filepath);
-			fis = new FileInputStream(file);
-			
-			byte[] buffer = new byte[bufferSize];
-			
-			long chunks = file.length() / buffer.length;
-			if (file.length() % buffer.length != 0)
-				chunks++;
-
-			networkOutputHandler.writeLine(NetworkCommands.CMD_SEND_FILE);
-			
-			String transmittedFilepath = getTransmittedFilepath(filepath);
-			
-			networkOutputHandler.writeLine(transmittedFilepath);
-			networkOutputHandler.writeLine(bufferSize);
-			networkOutputHandler.writeLine(chunks);
-
-			int len;
-			while ((len = fis.read(buffer)) != -1) {
-				dataOutput.write(buffer, 0, len);
-				dataOutput.flush();
-			}
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			NetworkHelper.closeStream(fis);
-		}
-	}
-	
+		
 	@Override
 	public void transmitFile(NetworkFile networkFile) {
 		FileInputStream fis = null;
 		try {
-			String filepath = networkFile.getPath();
 			int bufferSize = networkFile.getBufferSize();
 			long chunks = networkFile.getChunks();
+			long leftOverBytes = networkFile.getLeftoverBytes();
 			
-			File file = new File(filepath);
+			File file = networkFile.getFile();
 			fis = new FileInputStream(file);
 			
 			networkOutputHandler.writeLine(NetworkCommands.CMD_SEND_FILE);
 
 			byte[] buffer = new byte[bufferSize];
-			String transmittedFilepath = getTransmittedFilepath(filepath);
+			String transmittedFilepath = getTransmittedFilepath(file.getAbsolutePath());
 			
 			networkOutputHandler.writeLine(transmittedFilepath);
 			networkOutputHandler.writeLine(bufferSize);
 			networkOutputHandler.writeLine(chunks);
+			networkOutputHandler.writeLine(leftOverBytes);
 
 			int len;
 			while ((len = fis.read(buffer)) != -1) {
@@ -138,16 +108,6 @@ public class NetworkFileTransceiver implements FileTransceiverListener {
 		if(pos == -1)
 			pos = filepath.lastIndexOf('\\');
 		return pos;
-	}
-	
-	/**
-	 * Checks, if the file path was given relatively to the sync folder and adds it, if this applies.
-	 * 
-	 * @param filepath - Path to the file that should be checked
-	 * @return Full file path
-	 */
-	private String getFullFilepath(String filepath) {
-		return !filepath.startsWith(File.separator) ? filepath = syncFolder + File.separator + filepath : filepath;
 	}
 	
 	/**
