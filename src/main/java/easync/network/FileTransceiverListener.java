@@ -5,18 +5,18 @@ import easync.filehandling.NetworkFile;
 public interface FileTransceiverListener {
 	
 	/**
-	 * Startet den Empfang einer Datei am Data-Stream.
+	 * Starts the receiving of a file on the data stream.
 	 * 
-	 * @param filepath - Dateipfad (Ordner/Dateiname)
-	 * @param bufferSize - Groesse das Puffers
-	 * @param chunks - Datenteile
+	 * @param filepath - Filepath (folder/filename)
+	 * @param bufferSize - Size of the buffer
+	 * @param chunks - Parts of data
 	 */
 	public void receivingFile(String filepath, int bufferSize, int chunks);
 	
 	/**
-	 * Sendet eine Datei ueber das Netzwerk.
+	 * Sends a file over the network.
 	 * 
-	 * @param filepath - Pfad zur Datei, die gesendet werden soll
+	 * @param filepath - Path to file that should be sent.
 	 * @deprecated Use {@link FileTransceiverListener}{@link #transmitFile(NetworkFile)} instead.
 	 */
 	@Deprecated

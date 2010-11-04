@@ -5,18 +5,17 @@ import java.net.Socket;
 import easync.network.NetworkHandler;
 
 /**
- * Diese Klasse kuemmert sich um die Kommunkation zwischen Server und jeweils eines Clients.
- *
+ * This class takes care of the communication between the server and always one client.
  */
 public class ConnectionHandler implements Runnable {
 
 	private NetworkHandler network;
 
 	/**
-	 * Startet einen Netzwerk-Thread und den Thread dieses Objekts.
+	 * Starts a network connection and the thread of this class.
 	 * 
-	 * @param controlSocket - Socket des Control-Streams
-	 * @param dataSocket - Socket des Data-Streams
+	 * @param controlSocket - Socket of the control stream
+	 * @param dataSocket - Socket of the data stream
 	 */
 	public ConnectionHandler(Socket controlSocket, Socket dataSocket) {
 		network = new NetworkHandler(controlSocket, dataSocket);

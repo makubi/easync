@@ -3,10 +3,10 @@ package easync.filehandling;
 import java.io.File;
 
 /**
+ * This class is used to calculate the needed parameters for a NetworkFile.
+ * At the moment this parameters are the number of parts in which it should be transferred, the path of the file (which should be known before) and the size of the buffer (standard: 512).
+ * If the file at the previous set path can't be found, the method, that calculates the remaining parameters, returns null.  
  * 
- * Diese Klasse kuemmert sich um das Berechnen der Parameter fuer ein NetworkFile.
- * Zur ist das nur die Anzahl der Teilstuecke, in der diese Datei gesendet werden soll, da der Pfad schon vorher bekannt sein sollte und die Groesse des Puffers standardgemaess auf 512 gesetzt ist.
- * Wird die Datei zu dem gesetzten Pfad nicht gefunden, wird null von der Methode, die zur Berechnung der Parameter zustaendig ist, zurueckgegeben.
  */
 public class NetworkFileCalculator {
 	

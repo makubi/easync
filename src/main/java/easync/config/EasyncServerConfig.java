@@ -9,7 +9,8 @@ import java.io.IOException;
 import easync.network.NetworkHelper;
 
 /**
- * Stellt Konfigurationsparameter des Clients zur Verfuegung.
+ * Provides configuration parameters to the server.
+ * This is done by using an Properties-File.
  *
  */
 public class EasyncServerConfig extends EasyncConfig {
@@ -20,7 +21,7 @@ public class EasyncServerConfig extends EasyncConfig {
 	private File workDir = new File(System.getProperty("user.home")+File.separator+"EaSync");
 
 	/**
-	 * Laedt die Konfiguration und erstellt vorher eine Neue, falls nicht vorhanden.
+	 * Loads the configuration and creats a new one, if non exists.
 	 */
 	public EasyncServerConfig() {
 		if (!configFile.exists()) {
@@ -30,7 +31,7 @@ public class EasyncServerConfig extends EasyncConfig {
 	}
 	
 	/**
-	 * Laedt Properties, die gefunden werden.
+	 * Loads the properties that were found.
 	 */
 	private void loadProperties() {
 		FileInputStream inStream = null;
@@ -59,7 +60,7 @@ public class EasyncServerConfig extends EasyncConfig {
 	}
 
 	/**
-	 * Legt eine neue Konfiguration an und schreibt die Standard-Werte hinein.
+	 * Creates a new configuration and fills it with the default values. 
 	 */
 	private void initNewConfig() {
 		FileOutputStream outStream = null;
@@ -83,6 +84,10 @@ public class EasyncServerConfig extends EasyncConfig {
 		}
 	}
 	
+	/**
+	 * Returns the path to the current working directory and creates the folders to that path if it does not exist yet.
+	 * @return The path to the current working directory
+	 */
 	public String getWorkDir() {
 		if(!workDir.exists()) {
 			workDir.mkdirs();
@@ -90,6 +95,11 @@ public class EasyncServerConfig extends EasyncConfig {
 		return workDir.getAbsolutePath();
 	}
 
+	/**
+	 * Sets the folder, the server works in, e.g. synchronize data to.
+	 * Then it saves the path to that folder to the properties file.
+	 * @param workDir - Sets the working directory of the server
+	 */
 	public void setWorkDir(String workDir) {
 		this.workDir = new File(workDir);
 		putProperty("workDir", workDir);

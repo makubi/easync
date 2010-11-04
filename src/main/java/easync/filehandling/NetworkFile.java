@@ -1,9 +1,9 @@
 package easync.filehandling;
 
 /**
- * 
- * Repraesentiert eine Datei, die ueber das Netzwerk versendet werden soll.
- * Der Pfad wird gesetzt, danach wird das Objekt zu einer Queue hinzugefuegt und dort mit den fehlenden Parametern, (optional) buffer-size und chunks, befuellt.
+ * Represents a file that is to be sent over the network.
+ * First, you need to set the path and then you have to added that object to a queue.
+ * The queue should take care of calculating the missing parameters, number of chunks and optionally buffer-size. 
  */
 public class NetworkFile {
 	

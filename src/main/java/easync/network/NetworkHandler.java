@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 import easync.config.EasyncClientConfig;
@@ -20,13 +21,12 @@ import easync.filehandling.NetworkFile;
 import easync.filehandling.NetworkFileQueueHandler;
 
 /**
- * Implementierung der Netzwerkfaehigkeit. Diese Klasse kuemmert sich um die
- * Kommunikation zwischen Client und Server. Das Lesen des Input-Streams und das
- * Senden ueber den Output-Stream passieren in eigenen Klassen.
+ * Implementation of the network capability.
+ * This class takes care of the communication between server and client.
+ * The reading and writing on the streams are done in separate classes.
  * 
  * @see easync.network.NetworkInputHandler
  * @see easync.network.NetworkOutputHandler
- * 
  */
 public class NetworkHandler implements Runnable {
 
@@ -51,8 +51,7 @@ public class NetworkHandler implements Runnable {
 	private NetworkInputHandler networkInputThread;
 
 	/**
-	 * Wenn die connect-Methode aufgerufen wird, werden zwei Sockets (Control,
-	 * Data) initialisert und eine Verbindung zum Server hergestellt.
+	 * If the connect method is called, two sockets (control, data) are initialized and a connection to the server is established.
 	 * 
 	 * @see easync.network.NetworkHandler#connect()
 	 */
@@ -64,18 +63,14 @@ public class NetworkHandler implements Runnable {
 	}
 
 	/**
-	 * Dieser Konstruktur wird vom Client-Handler auf der Server-Seite
-	 * verwendet, da dieser schon initialisierte Sockets (siehe
-	 * ServerSocket.accept()) erhaelt. Wird die connect-Methode aufgerufen,
-	 * werden die uebergebenen Sockets benutzt.
-	 * 
+	 * This constructor is used by the server-side client handler, because it gets already initialized sockets (see {@link ServerSocket#accept()}.
+	 * If the connect method is called, these sockets are used. 
 	 * @param controlSocket
-	 *            - Socket fuer den Control-Stream
+	 *            - Socket for the control stream
 	 * @param dataSocket
-	 *            - Socket fuer den Daten-Stream
+	 *            - Socket for the data stream
 	 * 
 	 * @see easync.server.EasyncServer
-	 * @see java.net.ServerSocket#accept()
 	 * @see easync.network.NetworkHandler#connect()
 	 */
 	public NetworkHandler(Socket controlSocket, Socket dataSocket) {
@@ -87,8 +82,7 @@ public class NetworkHandler implements Runnable {
 	}
 
 	/**
-	 * Baut die Verbindung zum Gegenueber auf und startet das Initialisieren der
-	 * Streams.
+	 * Connects to the vis-a-vis and starts the initialization of the stream.
 	 * 
 	 * @see easync.network.NetworkHandler#initStreams()
 	 */
@@ -110,7 +104,7 @@ public class NetworkHandler implements Runnable {
 	}
 
 	/**
-	 * Initialisiert den Input- und Output-Stream des Control-Sockets.
+	 * Initializes the input and the output stream of the control socket.
 	 */
 	private void initStreams() {
 		try {
@@ -140,7 +134,7 @@ public class NetworkHandler implements Runnable {
 	}
 
 	/**
-	 * Baut den NetworkFileTransceiver zusammen.
+	 * Wires the used NetworkFileTransceiver.
 	 */
 	private void wireNetworkFileTransceiver() {
 		networkFileTransceiver.setNetworkOutputHandler(networkOutputThread);
@@ -150,7 +144,7 @@ public class NetworkHandler implements Runnable {
 	}
 
 	/**
-	 * Baut den NetworkInputHandler zusammen.
+	 * Wires the used NetworkInputHandler.
 	 */
 	private void wireInputHandler() {
 		networkInputThread.setInputStream(input);
@@ -158,7 +152,7 @@ public class NetworkHandler implements Runnable {
 	}
 
 	/**
-	 * Baut den NetworkOutputHandler zusammen.
+	 * Wires the used NetworkOutputHandler.
 	 */
 	private void wireOutputHandler() {
 		networkOutputThread.setOutputStream(output);
@@ -171,7 +165,7 @@ public class NetworkHandler implements Runnable {
 	}
 
 	/**
-	 * Startet den Netzwerk-Input- und Output-Thread.
+	 * Starts the network input and output thread.
 	 */
 	private void startNetworkThreads() {
 		networkInputThread.start();
@@ -180,8 +174,7 @@ public class NetworkHandler implements Runnable {
 	}
 
 	/**
-	 * Initialisiert den NetworkTransceiver, NetworkInputHandler und
-	 * NetworkOutputHandler.
+	 * Initializes the NetworkTransceiver, NetworkInputHandler, NetworkOutputHandler, NetworkFileQueueHandler and the FileQueue.
 	 */
 	private void initNetworkHandler() {
 		networkFileTransceiver = new NetworkFileTransceiver();
@@ -196,10 +189,10 @@ public class NetworkHandler implements Runnable {
 	}
 
 	/**
-	 * Schreibt eine Zeile auf den control-stream.
+	 * Writes a line to the control streams.
 	 * 
 	 * @param line
-	 *            - Text, der geschrieben werden soll
+	 *            - Text that should be sent
 	 * 
 	 * @see easync.network.NetworkOutputHandler
 	 */
@@ -208,35 +201,36 @@ public class NetworkHandler implements Runnable {
 	}
 
 	/**
-	 * Schreibt eine int-Zahl auf den control-stream.
+	 * Writes an int number to the control stream
 	 * 
 	 * @param number
-	 *            - Zahl, die uebertragen werden soll
-	 * 
+	 *            - Number that should be sent
+	 *
 	 * @see easync.network.NetworkOutputHandler
 	 */
 	public void writeLine(int number) {
-		writeLine("" + number);
+		networkOutputThread.writeLine(number);
 	}
 
 	/**
-	 * Schreibt eine long-Zahl auf den control-stream.
+	 * Writes a long number to the control stream
 	 * 
 	 * @param number
-	 *            - Zahl, die uebertragen werden soll
-	 * 
+	 *            - Number that should be sent
+	 *
 	 * @see easync.network.NetworkOutputHandler
 	 */
 	public void writeLine(long number) {
-		writeLine("" + number);
+		networkOutputThread.writeLine(number);
 	}
 
 	/**
-	 * Sendet eine Datei an das Gegenueber.
+	 * Sends a file to the vis-a-vis.
 	 * 
 	 * @param file
-	 *            - Dateiname der Datei, die uebertragen werden soll
-	 * 
+	 *            - Name of the file that should be sent
+	 *            
+	 * @deprecated See {@link NetworkHandler#transmitFile}
 	 * @see easync.network.NetworkOutputHandler
 	 */
 	@Deprecated
@@ -244,6 +238,11 @@ public class NetworkHandler implements Runnable {
 		networkFileTransceiver.sendFile(file);
 	}
 
+	/**
+	 * Transmits a file to the vis-a-vis.
+	 * 
+	 * @param filepath - Path to the file that should be sent
+	 */
 	public void transmitFile(String filepath) {
 		NetworkFile file = new NetworkFile();
 		file.setPath(filepath);
@@ -259,10 +258,12 @@ public class NetworkHandler implements Runnable {
 	}
 
 	/**
-	 * Sendet eine Datei an das Gegenueber.
+	 * Sents a file to the vis-a-vis.
 	 * 
 	 * @param file
-	 *            - Datei, die uebertragen werden soll
+	 *            - File that should be sent
+	 * 
+	 * @deprecated See {@link NetworkHandler#transmitFile}
 	 */
 	@Deprecated
 	public void sendFile(File file) {

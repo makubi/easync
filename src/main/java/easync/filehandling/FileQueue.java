@@ -3,8 +3,7 @@ package easync.filehandling;
 import java.io.FileNotFoundException;
 
 /**
- * 
- * Interface zu einer Queue, die sich um File-Handlinung und Netzwerk kuemmert.
+ * Interface to a queue that provides functionality to handle files that should e.g. be sent over the network.
  */
 public interface FileQueue {
 	

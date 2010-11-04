@@ -9,7 +9,8 @@ import java.util.Properties;
 import easync.network.NetworkHelper;
 
 /**
- * Stellt Konfigurationsparameter bereit, die Server sowie Client enthalten.
+ * Provides configuration parameters that is used by both, the client and the server.
+ * This is done by using an Properties-File.
  *
  */
 public abstract class EasyncConfig {
@@ -21,10 +22,10 @@ public abstract class EasyncConfig {
 	protected int port = 43443;
 	
 	/**
-	 * Fuegt ein Key/Value-Paar zu der Properties-Map hinzu und speichert dieses in der Properties-Datei.
+	 * Puts a pair of key/value to the properties-map and saves it to the properties file.
 	 * 
-	 * @param property - Key der Property
-	 * @param value - Wert der Property
+	 * @param property - Key of the property
+	 * @param value - Value of the property
 	 */
 	protected void putProperty(String property, String value) {
 		FileOutputStream outStream = null;
@@ -45,19 +46,20 @@ public abstract class EasyncConfig {
 	
 	/**
 	 * Liefert den verwendeten Port.
+	 * Returns the used port.
 	 * 
-	 * @return Verwendeter Port
+	 * @return Used port
 	 */
 	public int getPort() {
 		return port;
 	}
 
 	/**
-	 * Setzt den zu verwenden Port und schreibt ihn in die Properties-Datei.
-	 * Der Port muss zwischen 1 und 65534 liegen. Ist diese nicht gegeben, wird eine IllegalArgumentException geworfen.
-	 * Fuer einen Port < 1024 werden Root-Rechte benoetigt.
+	 * Sets the port that should be used an saves it to the properties file.
+	 * The port has to be between 1 and 65534. If that isn't the case, an IllegalArgumentException is thrown.
+	 * To use a port < 1024, root privileges are needed.
 	 * 
-	 * @param port - Port, der gesetzt werden soll
+	 * @param port - Port that should be set
 	 * @throws IllegalArgumentException
 	 */
 	public void setPort(int port) {
@@ -70,9 +72,9 @@ public abstract class EasyncConfig {
 	}
 	
 	/**
-	 * Liefert die Konfigurationsdatei.
+	 * Returns the file to be used as properties file.
 	 * 
-	 * @return Verwendete Konfigurationsdatei
+	 * @return Used configuration file
 	 */
 	protected abstract File getConfigFile();
 }

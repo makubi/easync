@@ -4,14 +4,13 @@ import java.io.Closeable;
 import java.io.IOException;
 
 /**
- * Stellt Hilfsmethoden fuer Netzwerkklassen zur Verfuegung.
- * 
+ * Provides help functionality for the network.
  */
 public class NetworkHelper {
 
 	/**
-	 * Schliesst ein Objekt, dass das Interface Closeable implementiert. Dies kann beispielsweise ein Stream sein.
-	 * @param closeable - Objekt, das geschlossen werden soll
+	 * Closes an object that implements the {@link Closeable} interface. E.g. this can be a stream.
+	 * @param closeable - Object to be closed
 	 * @see java.io.Closeable
 	 */
 	public static void closeStream(Closeable closeable) {

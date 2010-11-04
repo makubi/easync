@@ -4,8 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 
 /**
- * Liest den Input-Stream des Control-Sockets und startet beispielsweise eine Methode zum Empfang einer Datei.
- *
+ * Reads the input stream of the control socket and e.g. starts the method of the receiving of a file.
  */
 public class NetworkInputHandler extends Thread {
 	

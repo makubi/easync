@@ -9,7 +9,8 @@ import java.io.IOException;
 import easync.network.NetworkHelper;
 
 /**
- * Stellt Konfigurationsparameter des Clients zur Verfuegung.
+ * Provides configuration parameters to the client.
+ * This is done by using an Properties-File.
  * 
  */
 public class EasyncClientConfig extends EasyncConfig {
@@ -21,7 +22,7 @@ public class EasyncClientConfig extends EasyncConfig {
 	private File syncFolder = new File(System.getProperty("user.home")+File.separator+"EaSync");
 
 	/**
-	 * Laedt die Konfiguration und erstellt vorher eine Neue, falls nicht vorhanden.
+	 * Loads the configuration and creats a new one, if non exists.
 	 */
 	public EasyncClientConfig() {
 		if (!configFile.exists()) {
@@ -31,7 +32,7 @@ public class EasyncClientConfig extends EasyncConfig {
 	}
 
 	/**
-	 * Laedt Properties, die gefunden werden.
+	 * Loads the properties that were found.
 	 */
 	private void loadProperties() {
 		FileInputStream inStream = null;
@@ -63,7 +64,7 @@ public class EasyncClientConfig extends EasyncConfig {
 	}
 
 	/**
-	 * Legt eine neue Konfiguration an und schreibt die Standard-Werte hinein.
+	 * Creates a new configuration and fills it with the default values. 
 	 */
 	private void initNewConfig() {
 		FileOutputStream outStream = null;
@@ -89,16 +90,16 @@ public class EasyncClientConfig extends EasyncConfig {
 	}
 
 	/**
-	 * Liefert den verwendeten Hostnamen oder IP-Adresse.
-	 * @return Verwendeter Host
+	 * Returns the used hostname or ip address.
+	 * @return The used host
 	 */
 	public String getHost() {
 		return host;
 	}
 
 	/**
-	 * Setzt den zu verwendeten Hostname oder die zu verwendente IP-Adresse und speicherte diesen Wert in die Properties-Datei.
-	 * @param host - Host, der verwendet werden soll
+	 * Sets the hostname or ip address that should be used and saves it to the properties file.
+	 * @param host - Host that should be used
 	 */
 	public void setHost(String host) {
 		this.host = host;
@@ -110,11 +111,19 @@ public class EasyncClientConfig extends EasyncConfig {
 		return configFile;
 	}
 
+	/**
+	 * Sets the folder, files should be synchronized to and saves that path to the properties file.
+	 * @param syncFolder - Folder, files should be synchronized to.
+	 */
 	public void setSyncFolder(String syncFolder) {
 		this.syncFolder = new File(syncFolder);
 		putProperty("syncFolder", syncFolder);
 	}
 
+	/**
+	 * Returns the path to the current synchronization folder and creates the folders to that path if it does not exist yet.
+	 * @return The path to the current synchronization folder
+	 */
 	public String getSyncFolder() {
 		if(!syncFolder.exists()) {
 			syncFolder.mkdirs();

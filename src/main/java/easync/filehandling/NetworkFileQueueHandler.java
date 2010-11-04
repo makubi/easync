@@ -3,8 +3,8 @@ package easync.filehandling;
 import easync.network.NetworkFileTransceiver;
 
 /**
- * Diese Klasse kuemmert sich um das Senden einer Datei, wenn ein NetworkFile in der Queue gefunden wird bzw. wenn dieser Thread durch das Hinzufuegen wieder gestartet wird.
- *
+ * This class cares about sending a file over the network, if a {@link NetworkFile} is found in the queue.
+ * It uses a thread that is paused, after an element is retrieved from the queue. If an element is added to the queue, this thread has to be unpaused.  *
  */
 public class NetworkFileQueueHandler extends Thread {
 

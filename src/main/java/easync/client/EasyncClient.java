@@ -6,7 +6,7 @@ import java.io.IOException;
 import easync.network.NetworkHandler;
 
 /**
- * Hauptklasse des Clients.
+ * Main class of the client.
  *
  */
 public class EasyncClient {

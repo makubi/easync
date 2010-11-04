@@ -4,7 +4,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 
 /**
- * Kuemmert sich um das Senden ueber den Control-Stream.
+ * Takes care of the transmission over the control stream.
  *
  */
 public class NetworkOutputHandler extends Thread {
@@ -20,9 +20,9 @@ public class NetworkOutputHandler extends Thread {
 	}
 	
 	/**
-	 * Schreibt eine Zeile auf den control-stream.
+	 * Writes a line to the control stream.
 	 * 
-	 * @param line - Text, der geschrieben werden soll
+	 * @param line - Text that should be sent
 	 * 
 	 */
 	public synchronized void writeLine(String line) {
@@ -35,20 +35,20 @@ public class NetworkOutputHandler extends Thread {
 	}
 
 	/**
-	 * Schreibt eine int-Zahl auf den control-stream.
+	 * Writes an int number to the control stream
 	 * 
 	 * @param number
-	 *            - Zahl, die uebertragen werden soll
+	 *            - Number that should be sent
 	 */
 	public void writeLine(int number) {
 		writeLine("" + number);
 	}
 
 	/**
-	 * Schreibt eine long-Zahl auf den control-stream.
+	 * Writes a long number to the control stream
 	 * 
 	 * @param number
-	 *            - Zahl, die uebertragen werden soll
+	 *            - Number that should be sent
 	 */
 	public void writeLine(long number) {
 		writeLine("" + number);

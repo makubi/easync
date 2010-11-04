@@ -9,9 +9,8 @@ import easync.config.EasyncServerConfig;
 
 
 /**
- * Hauptklasse des Servers.
- * Dieser kuemmert sich um den Verbindungsaufbau zwischen Server und Clients.
- *
+ * Main class of the server.
+ * It takes care of the connection to new clients.
  */
 public class EasyncServer {
 	private int port;
@@ -26,7 +25,7 @@ public class EasyncServer {
 	}
 
 	/**
-	 * Kuemmert sich um die Verbindung mit neuen Clients und startet fuer jeden neu Verbundenen einen ConnectionHandler-Thread.
+	 * Takes care of new connections and creates a ConnectionHandler for every new connected client.
 	 * @see easync.server.ConnectionHandler
 	 */
 	private void handleConnections() {

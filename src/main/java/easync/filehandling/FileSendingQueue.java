@@ -5,10 +5,9 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * 
- * Implementierung einer FileQueue.
- * Diese Klasse ist zustaendig fuer das Hinzufuegen neuer Elemente zur Queue und fuer das Herausnehmen aus dieser.
- *  Wird ein NetworkFile {@link NetworkFile} hinzugefuegt, werden fuer dieses die benoetigten Parameter berechnet.
+ * Implementation of a FileQueue.
+ * This class provides functionality to add elements to or retrieve some from the used queue.
+ * If a {@link NetworkFile} is added, the needed parameters for it are calculated. 
  */
 public class FileSendingQueue implements FileQueue {
 
@@ -16,7 +15,7 @@ public class FileSendingQueue implements FileQueue {
 	private NetworkFileCalculator calculator;
 	
 	/**
-	 * Erzeugt eine LinkedBlockingQueue und den NetworkFileCalculator.
+	 * Initializes a {@link LinkedBlockingQueue} and a {@link NetworkFileCalculator}.
 	 */
 	public FileSendingQueue() {
 		queue = new LinkedBlockingQueue<NetworkFile>();

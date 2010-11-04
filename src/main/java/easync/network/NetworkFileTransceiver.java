@@ -10,8 +10,7 @@ import java.io.IOException;
 import easync.filehandling.NetworkFile;
 
 /**
- * Kuemmert sich um den Dateiempfang und -versand.
- *
+ * Implements functionality to receive and send files.
  */
 public class NetworkFileTransceiver implements FileTransceiverListener {
 	
@@ -128,11 +127,11 @@ public class NetworkFileTransceiver implements FileTransceiverListener {
 	}
 	
 	/**
-	 * Liefert die Position, bei der Datei- und Ordnername getrennt werden.
-	 * Position des ersten '/' oder '\' der von hinten im Dateipfad gefunden wird.
+	 * Returns the position, directory- and filename are separated.
+	 * Position of the last occurrence of '/' or '\' found in the filepath. 
 	 * 
-	 * @param filepath - Dateipfad, der ueberprueft werden soll
-	 * @return Position des hintersten Trennzeichens 
+	 * @param filepath - Filepath that should be checked
+	 * @return Position of rearmost the separator
 	 */
 	private int getFileSeparationPos(String filepath) {
 		int pos = filepath.lastIndexOf('/');
@@ -142,21 +141,21 @@ public class NetworkFileTransceiver implements FileTransceiverListener {
 	}
 	
 	/**
-	 * Ueberprueft, ob der Dateipfad relativ zum Sync-Folder angegeben wurde und ergaenzt ihn, falls dies zutrifft.
+	 * Checks, if the file path was given relatively to the sync folder and adds it, if this applies.
 	 * 
-	 * @param filepath - Dateipfad, der ueberprueft werden soll
-	 * @return Vollen Dateipfad
+	 * @param filepath - Path to the file that should be checked
+	 * @return Full file path
 	 */
 	private String getFullFilepath(String filepath) {
 		return !filepath.startsWith(File.separator) ? filepath = syncFolder + File.separator + filepath : filepath;
 	}
 	
 	/**
-	 * Ermittelt den Dateipfad, der uebertragen werden soll.
-	 * Wird der Pfad zur Datei im Sync-Folder gefunden, wird dieser Pfad abgeschnitten, ansonsten bleibt er gleich.
+	 * Determines the file path that should be transmitted.
+	 * If the path to the sync folder is found, it is cut off, else the path stays.
 	 * 
-	 * @param filepath - Dateipfad, der ueberprueft werden soll
-	 * @return Dateipfad, der uebertragen werden soll
+	 * @param filepath - Path of the file that should be checked
+	 * @return File path that should be transmitted
 	 */
 	private String getTransmittedFilepath(String filepath) {
 		return filepath.indexOf(syncFolder) > -1 ? filepath.substring(syncFolder.length()) : filepath;
