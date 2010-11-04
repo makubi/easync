@@ -14,7 +14,7 @@ import easync.network.NetworkHandler;
  */
 public class EasyncClient {
 
-	private final Logger logger = Logger.getLogger(EasyncClient.class);
+	private final static Logger LOGGER = Logger.getLogger(EasyncClient.class);
 	
 	private NetworkHandler network;
 	
@@ -42,7 +42,7 @@ public class EasyncClient {
 		try {
 			network.transmitFile(filepath);
 		} catch (FileNotFoundException e) {
-			logger.error("The file " + filepath + " was not found. File transmission aborted.", e);
+			LOGGER.error("The file " + filepath + " was not found. File transmission aborted.", e);
 		}
 	}
 	

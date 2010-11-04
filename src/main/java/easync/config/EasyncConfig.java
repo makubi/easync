@@ -17,7 +17,7 @@ import easync.network.NetworkHelper;
  */
 public abstract class EasyncConfig {
 	
-	private final Logger logger = Logger.getLogger(EasyncConfig.class);
+	private final static Logger LOGGER = Logger.getLogger(EasyncConfig.class);
 	
 	protected final File configDir = new File(System.getProperty("user.home")
 			+ File.separator + ".easync" + File.separator);
@@ -39,9 +39,9 @@ public abstract class EasyncConfig {
 			properties.put(property, value);
 			properties.store(outStream, "Automatically created config.");
 		} catch (FileNotFoundException e) {
-			logger.error("The file " + getConfigFile().getAbsolutePath() + " was not found. Saving new property aborted.",e);
+			LOGGER.error("The file " + getConfigFile().getAbsolutePath() + " was not found. Saving new property aborted.",e);
 		} catch (IOException e) {
-			logger.error("An I/O Exception occured. Saving properties aborted.",e);
+			LOGGER.error("An I/O Exception occured. Saving properties aborted.",e);
 		} finally {
 			NetworkHelper.closeStream(outStream);
 		}
@@ -70,7 +70,7 @@ public abstract class EasyncConfig {
 			this.port = port;
 			putProperty("port", "" + port);
 		} else {
-			logger.info("Tried to set invalid port ["+port+"].");
+			LOGGER.info("Tried to set invalid port ["+port+"].");
 			throw new IllegalArgumentException("Port out of range");
 		}
 	}

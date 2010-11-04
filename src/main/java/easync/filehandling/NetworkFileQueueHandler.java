@@ -15,7 +15,7 @@ import easync.network.NetworkFileTransceiver;
  */
 public class NetworkFileQueueHandler extends Thread {
 
-	private final Logger logger = Logger.getLogger(NetworkFileQueueHandler.class);
+	private final static Logger LOGGER = Logger.getLogger(NetworkFileQueueHandler.class);
 	
 	private BlockingQueue<NetworkFile> queue;
 	private NetworkFileTransceiver networkFileTransceiver;
@@ -35,7 +35,7 @@ public class NetworkFileQueueHandler extends Thread {
 			try {
 				networkFileTransceiver.transmitFile(queue.take());
 			} catch (InterruptedException e) {
-				logger.fatal("An InterruptedException occured.", e);
+				LOGGER.fatal("An InterruptedException occured.", e);
 			}
 		}
 	}

@@ -17,7 +17,7 @@ import easync.network.NetworkHelper;
  */
 public class EasyncClientConfig extends EasyncConfig {
 
-	private final Logger logger = Logger.getLogger(EasyncClientConfig.class);
+	private final static Logger LOGGER = Logger.getLogger(EasyncClientConfig.class);
 	
 	private final File configFile = new File(configDir.getAbsolutePath()
 			+ File.separator + "client.conf");
@@ -57,9 +57,9 @@ public class EasyncClientConfig extends EasyncConfig {
 				syncFolder = new File(properties.getProperty("syncFolder"));
 			}
 		} catch (FileNotFoundException e) {
-			logger.error("The file " + configFile.getAbsolutePath() + " was not found. Loading properties aborted.",e);
+			LOGGER.error("The file " + configFile.getAbsolutePath() + " was not found. Loading properties aborted.",e);
 		} catch (IOException e) {
-			logger.error("An I/O Exception occured. Loading properties aborted.",e);
+			LOGGER.error("An I/O Exception occured. Loading properties aborted.",e);
 		} finally {
 			NetworkHelper.closeStream(inStream);
 		}
@@ -81,9 +81,9 @@ public class EasyncClientConfig extends EasyncConfig {
 			properties.put("syncFolder", syncFolder.getAbsolutePath());
 			properties.store(outStream, "Automatically created  config.");
 		} catch (FileNotFoundException e) {
-			logger.error("The file " + configFile.getAbsolutePath() + " was not found. Initialization of new config aborted.",e);
+			LOGGER.error("The file " + configFile.getAbsolutePath() + " was not found. Initialization of new config aborted.",e);
 		} catch (IOException e) {
-			logger.error("An I/O Exception occured. Initialization of new config aborted.",e);
+			LOGGER.error("An I/O Exception occured. Initialization of new config aborted.",e);
 		} finally {
 			NetworkHelper.closeStream(outStream);
 		}

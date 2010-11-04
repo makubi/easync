@@ -17,7 +17,7 @@ import easync.filehandling.NetworkFile;
  */
 public class NetworkFileTransceiver implements FileTransceiverListener {
 	
-	private final Logger logger = Logger.getLogger(NetworkFileTransceiver.class);
+	private final static Logger LOGGER = Logger.getLogger(NetworkFileTransceiver.class);
 	
 	private NetworkOutputHandler networkOutputHandler;
 	private BufferedInputStream dataInput;
@@ -61,7 +61,7 @@ public class NetworkFileTransceiver implements FileTransceiverListener {
 			fos.flush();
 			
 		} catch (IOException e) {
-			logger.error("An I/O Exception occured. File receiving aborted.",e);
+			LOGGER.error("An I/O Exception occured. File receiving aborted.",e);
 		} finally {
 			NetworkHelper.closeStream(fos);
 		}
@@ -95,7 +95,7 @@ public class NetworkFileTransceiver implements FileTransceiverListener {
 			}
 			
 		} catch (IOException e) {
-			logger.error("An I/O Exception occured. File transmission aborted.",e);
+			LOGGER.error("An I/O Exception occured. File transmission aborted.",e);
 		} finally {
 			NetworkHelper.closeStream(fis);
 		}

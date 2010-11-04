@@ -17,7 +17,7 @@ import easync.network.NetworkInputHandler;
  */
 public class EasyncServer {
 	
-	private final Logger logger = Logger.getLogger(EasyncServer.class);
+	private final static Logger LOGGER = Logger.getLogger(EasyncServer.class);
 	
 	private int port;
 	private ArrayList<ConnectionHandler> connectedSockets;
@@ -41,7 +41,7 @@ public class EasyncServer {
 			Socket controlSocket;
 			Socket dataSocket;
 			ConnectionHandler connectionHandler = null;
-			logger.info("Easync-Server started on port "+port);
+			LOGGER.info("Easync-Server started on port "+port);
 			while(true) {
 				try {
 					controlSocket = serverSocket.accept();
@@ -49,15 +49,15 @@ public class EasyncServer {
 					dataSocket = serverSocket.accept();
 					connectionHandler = new ConnectionHandler(controlSocket, dataSocket);
 					connectedSockets.add(connectionHandler);
-					logger.info("Client #" + i++ + " connected at " + controlSocket.getInetAddress());
+					LOGGER.info("Client #" + i++ + " connected at " + controlSocket.getInetAddress());
 				}
 				catch (NullPointerException e) {
-					logger.error("An NullPointerException occured. Initializing new connection to this client aborted.",e);
+					LOGGER.error("An NullPointerException occured. Initializing new connection to this client aborted.",e);
 				}
 			}
 		}
 		catch (IOException e) {
-			logger.error("An I/O Exception occured. Server exiting.",e);
+			LOGGER.error("An I/O Exception occured. Server exiting.",e);
 		}
 	}
 	

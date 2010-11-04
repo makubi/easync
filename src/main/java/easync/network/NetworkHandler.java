@@ -33,7 +33,7 @@ import easync.filehandling.NetworkFileQueueHandler;
  */
 public class NetworkHandler implements Runnable {
 
-	private final Logger logger = Logger.getLogger(NetworkHandler.class);
+	private final static Logger LOGGER = Logger.getLogger(NetworkHandler.class);
 	
 	private String server;
 	private int port;
@@ -108,7 +108,7 @@ public class NetworkHandler implements Runnable {
 			}
 			initStreams();
 		} catch (IOException e) {
-			logger.error("An I/O Error occured. Is the server "+server+" up and running?", e);
+			LOGGER.error("An I/O Error occured. Is the server "+server+" up and running?", e);
 		}
 	}
 
@@ -139,7 +139,7 @@ public class NetworkHandler implements Runnable {
 
 			startNetworkThreads();
 		} catch (IOException e) {
-			logger.error("An I/O Error occured. Unable to initialize streams.", e);
+			LOGGER.error("An I/O Error occured. Unable to initialize streams.", e);
 		}
 	}
 

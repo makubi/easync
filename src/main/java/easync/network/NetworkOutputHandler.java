@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
  */
 public class NetworkOutputHandler extends Thread {
 
-	private final Logger logger = Logger.getLogger(NetworkOutputHandler.class);
+	private final static Logger LOGGER = Logger.getLogger(NetworkOutputHandler.class);
 	
 	private BufferedWriter output;
 
@@ -34,7 +34,7 @@ public class NetworkOutputHandler extends Thread {
 			output.write(line + '\n');
 			output.flush();
 		} catch (IOException e) {
-			logger.error("An I/O Exception occured while writing an line to the output stream.",e);
+			LOGGER.error("An I/O Exception occured while writing an line to the output stream.",e);
 		}
 	}
 

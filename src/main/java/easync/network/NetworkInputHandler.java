@@ -12,7 +12,7 @@ import easync.config.EasyncClientConfig;
  */
 public class NetworkInputHandler extends Thread {
 	
-	private final Logger logger = Logger.getLogger(NetworkInputHandler.class);
+	private final static Logger LOGGER = Logger.getLogger(NetworkInputHandler.class);
 	
 	private BufferedReader input;
 	private FileTransceiverListener networkFileTransceiver;
@@ -22,7 +22,7 @@ public class NetworkInputHandler extends Thread {
 		String line;
 		try {
 			while((line = input.readLine()) != null) {
-				logger.info("Received command: "+line);
+				LOGGER.info("Received command: "+line);
 				
 				if(line.equals(NetworkCommands.CMD_SEND_FILE)) {
 					String filepath = input.readLine();
@@ -33,7 +33,7 @@ public class NetworkInputHandler extends Thread {
 				}
 			}
 		} catch (IOException e) {
-			logger.error("An I/O Exception occured while reading the input stream.",e);
+			LOGGER.error("An I/O Exception occured while reading the input stream.",e);
 		}
 	}
 

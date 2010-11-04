@@ -12,7 +12,7 @@ import easync.config.EasyncClientConfig;
  */
 public class NetworkHelper {
 
-	private final static Logger logger = Logger.getLogger(NetworkHelper.class);
+	private final static Logger LOGGER = Logger.getLogger(NetworkHelper.class);
 
 	/**
 	 * Closes an object that implements the {@link Closeable} interface. E.g. this can be a stream.
@@ -24,7 +24,7 @@ public class NetworkHelper {
 			try {
 				closeable.close();
 			} catch (IOException e) {
-				logger.error("An I/O Error occured at closing an stream.", e);
+				LOGGER.error("An I/O Error occured at closing an stream.", e);
 			}
 		}
 	}
