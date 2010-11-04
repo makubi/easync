@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 import easync.network.NetworkHelper;
 
 /**
@@ -14,6 +16,9 @@ import easync.network.NetworkHelper;
  *
  */
 public abstract class EasyncConfig {
+	
+	private final Logger logger = Logger.getLogger(EasyncConfig.class);
+	
 	protected final File configDir = new File(System.getProperty("user.home")
 			+ File.separator + ".easync" + File.separator);
 	
@@ -34,11 +39,9 @@ public abstract class EasyncConfig {
 			properties.put(property, value);
 			properties.store(outStream, "Automatically created config.");
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("The file " + getConfigFile().getAbsolutePath() + " was not found. Saving new property aborted.",e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("An I/O Exception occured. Saving properties aborted.",e);
 		} finally {
 			NetworkHelper.closeStream(outStream);
 		}
@@ -62,11 +65,12 @@ public abstract class EasyncConfig {
 	 * @param port - Port that should be set
 	 * @throws IllegalArgumentException
 	 */
-	public void setPort(int port) {
+	public void setPort(int port) throws IllegalArgumentException {
 		if (port > 0 && port < 65535) {
 			this.port = port;
 			putProperty("port", "" + port);
 		} else {
+			logger.info("Tried to set invalid port ["+port+"].");
 			throw new IllegalArgumentException("Port out of range");
 		}
 	}

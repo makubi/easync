@@ -15,6 +15,8 @@ import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.log4j.Logger;
+
 import easync.config.EasyncClientConfig;
 import easync.config.EasyncServerConfig;
 import easync.filehandling.NetworkFile;
@@ -31,6 +33,8 @@ import easync.filehandling.NetworkFileQueueHandler;
  */
 public class NetworkHandler implements Runnable {
 
+	private final Logger logger = Logger.getLogger(NetworkHandler.class);
+	
 	private String server;
 	private int port;
 	private String syncFolder;
@@ -104,7 +108,7 @@ public class NetworkHandler implements Runnable {
 			}
 			initStreams();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("An I/O Error occured. Is the server "+server+" up and running?", e);
 		}
 	}
 
@@ -135,7 +139,7 @@ public class NetworkHandler implements Runnable {
 
 			startNetworkThreads();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("An I/O Error occured. Unable to initialize streams.", e);
 		}
 	}
 

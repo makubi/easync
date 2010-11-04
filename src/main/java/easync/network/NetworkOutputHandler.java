@@ -3,12 +3,16 @@ package easync.network;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
+
 /**
  * Takes care of the transmission over the control stream.
  *
  */
 public class NetworkOutputHandler extends Thread {
 
+	private final Logger logger = Logger.getLogger(NetworkOutputHandler.class);
+	
 	private BufferedWriter output;
 
 	// TODO: Implementierung ueber Kommando-Objekte und Queues, um
@@ -30,7 +34,7 @@ public class NetworkOutputHandler extends Thread {
 			output.write(line + '\n');
 			output.flush();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("An I/O Exception occured while writing an line to the output stream.",e);
 		}
 	}
 

@@ -5,7 +5,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
+
 import easync.config.EasyncServerConfig;
+import easync.network.NetworkInputHandler;
 
 
 /**
@@ -13,6 +16,9 @@ import easync.config.EasyncServerConfig;
  * It takes care of the connection to new clients.
  */
 public class EasyncServer {
+	
+	private final Logger logger = Logger.getLogger(EasyncServer.class);
+	
 	private int port;
 	private ArrayList<ConnectionHandler> connectedSockets;
 	
@@ -35,7 +41,7 @@ public class EasyncServer {
 			Socket controlSocket;
 			Socket dataSocket;
 			ConnectionHandler connectionHandler = null;
-			System.out.println("Easync-Server started on port "+port);
+			logger.info("Easync-Server started on port "+port);
 			while(true) {
 				try {
 					controlSocket = serverSocket.accept();
@@ -43,13 +49,15 @@ public class EasyncServer {
 					dataSocket = serverSocket.accept();
 					connectionHandler = new ConnectionHandler(controlSocket, dataSocket);
 					connectedSockets.add(connectionHandler);
-					System.out.println("Client #" + i++ + " connected at " + controlSocket.getInetAddress());
+					logger.info("Client #" + i++ + " connected at " + controlSocket.getInetAddress());
 				}
-				catch (NullPointerException e) {}
+				catch (NullPointerException e) {
+					logger.error("An NullPointerException occured. Initializing new connection to this client aborted.",e);
+				}
 			}
 		}
 		catch (IOException e) {
-			e.printStackTrace();
+			logger.error("An I/O Exception occured. Server exiting.",e);
 		}
 	}
 	

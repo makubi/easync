@@ -3,10 +3,16 @@ package easync.network;
 import java.io.BufferedReader;
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
+
+import easync.config.EasyncClientConfig;
+
 /**
  * Reads the input stream of the control socket and e.g. starts the method of the receiving of a file.
  */
 public class NetworkInputHandler extends Thread {
+	
+	private final Logger logger = Logger.getLogger(NetworkInputHandler.class);
 	
 	private BufferedReader input;
 	private FileTransceiverListener networkFileTransceiver;
@@ -16,7 +22,7 @@ public class NetworkInputHandler extends Thread {
 		String line;
 		try {
 			while((line = input.readLine()) != null) {
-				System.out.println("Received command: "+line);
+				logger.info("Received command: "+line);
 				
 				if(line.equals(NetworkCommands.CMD_SEND_FILE)) {
 					String filepath = input.readLine();
@@ -27,7 +33,7 @@ public class NetworkInputHandler extends Thread {
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("An I/O Exception occured while reading the input stream.",e);
 		}
 	}
 

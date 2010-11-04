@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
+
 import easync.network.NetworkHandler;
 
 /**
@@ -12,6 +14,8 @@ import easync.network.NetworkHandler;
  */
 public class EasyncClient {
 
+	private final Logger logger = Logger.getLogger(EasyncClient.class);
+	
 	private NetworkHandler network;
 	
 	public EasyncClient() {
@@ -38,8 +42,7 @@ public class EasyncClient {
 		try {
 			network.transmitFile(filepath);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("The file " + filepath + " was not found. File transmission aborted.", e);
 		}
 	}
 	

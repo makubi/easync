@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
+
 import easync.network.NetworkHelper;
 
 /**
@@ -14,6 +16,8 @@ import easync.network.NetworkHelper;
  *
  */
 public class EasyncServerConfig extends EasyncConfig {
+	
+	private final Logger logger = Logger.getLogger(EasyncServerConfig.class);
 
 	private final File configFile = new File(configDir.getAbsolutePath()
 			+ File.separator + "server.conf");
@@ -49,11 +53,9 @@ public class EasyncServerConfig extends EasyncConfig {
 			}
 			
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("The file " + configFile.getAbsolutePath() + " was not found. Loading properties aborted.",e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("An I/O Exception occured. Loading properties aborted.",e);
 		} finally {
 			NetworkHelper.closeStream(inStream);
 		}
@@ -74,11 +76,9 @@ public class EasyncServerConfig extends EasyncConfig {
 			properties.put("workDir", workDir.getAbsolutePath());
 			properties.store(outStream, "Automatically created  config.");
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("The file " + configFile.getAbsolutePath() + " was not found. Initialization of new config aborted.",e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("An I/O Exception occured. Initialization of new config aborted.",e);
 		} finally {
 			NetworkHelper.closeStream(outStream);
 		}

@@ -2,6 +2,9 @@ package easync.filehandling;
 
 import java.util.concurrent.BlockingQueue;
 
+import org.apache.log4j.Logger;
+
+import easync.config.EasyncClientConfig;
 import easync.network.NetworkFileTransceiver;
 
 /**
@@ -12,6 +15,8 @@ import easync.network.NetworkFileTransceiver;
  */
 public class NetworkFileQueueHandler extends Thread {
 
+	private final Logger logger = Logger.getLogger(NetworkFileQueueHandler.class);
+	
 	private BlockingQueue<NetworkFile> queue;
 	private NetworkFileTransceiver networkFileTransceiver;
 
@@ -29,11 +34,9 @@ public class NetworkFileQueueHandler extends Thread {
 		while (true) {
 			try {
 				networkFileTransceiver.transmitFile(queue.take());
-				System.out.println("Queue sending file! :-)");
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				logger.fatal("An InterruptedException occured.", e);
 			}
-
 		}
 	}
 

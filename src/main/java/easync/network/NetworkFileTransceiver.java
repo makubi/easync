@@ -7,12 +7,17 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
+
+import easync.config.EasyncClientConfig;
 import easync.filehandling.NetworkFile;
 
 /**
  * Implements functionality to receive and send files.
  */
 public class NetworkFileTransceiver implements FileTransceiverListener {
+	
+	private final Logger logger = Logger.getLogger(NetworkFileTransceiver.class);
 	
 	private NetworkOutputHandler networkOutputHandler;
 	private BufferedInputStream dataInput;
@@ -56,7 +61,7 @@ public class NetworkFileTransceiver implements FileTransceiverListener {
 			fos.flush();
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("An I/O Exception occured. File receiving aborted.",e);
 		} finally {
 			NetworkHelper.closeStream(fos);
 		}
@@ -90,7 +95,7 @@ public class NetworkFileTransceiver implements FileTransceiverListener {
 			}
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("An I/O Exception occured. File transmission aborted.",e);
 		} finally {
 			NetworkHelper.closeStream(fis);
 		}

@@ -2,13 +2,16 @@ package easync.server;
 
 import java.net.Socket;
 
+import org.apache.log4j.Logger;
+
 import easync.network.NetworkHandler;
+import easync.network.NetworkInputHandler;
 
 /**
  * This class takes care of the communication between the server and always one client.
  */
 public class ConnectionHandler implements Runnable {
-
+	
 	private NetworkHandler network;
 
 	/**
@@ -25,11 +28,7 @@ public class ConnectionHandler implements Runnable {
 
 	@Override
 	public void run() {
-			try {
 				network.connect();
 				network.writeLine("Client-Handler on server-side says: Hello! :-)");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 	}
 }
