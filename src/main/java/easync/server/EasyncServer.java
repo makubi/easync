@@ -22,13 +22,15 @@ public class EasyncServer implements ConnectionEstablishedListener {
 	private final static Logger LOGGER = Logger.getLogger(EasyncServer.class);
 	
 	private int port;
-	private ArrayList<ConnectionHandler> connectedSockets = new ArrayList<ConnectionHandler>();;
+	private String workDir;
 	
+	private ArrayList<ConnectionHandler> connectedSockets = new ArrayList<ConnectionHandler>();;
 	private HashMap<Integer,SocketCheckThread> socketCache = new HashMap<Integer, SocketCheckThread>();
 		
 	public EasyncServer() {
 		EasyncServerConfig config = new EasyncServerConfig();
 		port = config.getPort();
+		workDir = config.getWorkDir();
 		
 		handleConnections();
 	}
@@ -43,7 +45,7 @@ public class EasyncServer implements ConnectionEstablishedListener {
 			ServerSocket serverSocket = new ServerSocket(port);
 			Socket socket;
 			SocketCheckThread socketCheckThread;
-			LOGGER.info("Easync-Server started on port "+port);
+			LOGGER.info("Easync-Server started on port "+port+". Using work dir: ["+workDir+"]");
 			while(true) {
 				try {
 					// Waits until a client connects.

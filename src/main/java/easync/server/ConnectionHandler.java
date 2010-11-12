@@ -27,6 +27,5 @@ public class ConnectionHandler extends Thread {
 	@Override
 	public void run() {
 		network.connect();
-		network.writeLine("Client-Handler on server-side says: Hello! :-)");
 	}
 }

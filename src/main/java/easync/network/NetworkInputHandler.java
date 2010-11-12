@@ -29,6 +29,9 @@ public class NetworkInputHandler extends Thread {
 					int leftoverBytes = Integer.parseInt(input.readLine());
 					networkFileTransceiver.receivingFile(filepath, bufferSize, chunks, leftoverBytes);
 				}
+				else {
+					LOGGER.info("Received unknown command: "+line);
+				}
 			}
 		} catch (IOException e) {
 			LOGGER.error("An I/O Exception occured while reading the input stream.",e);

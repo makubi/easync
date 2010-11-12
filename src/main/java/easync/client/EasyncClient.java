@@ -14,7 +14,8 @@ import easync.socketestablishment.SocketConnector;
  * Main class of the client.
  * 
  */
-public class EasyncClient implements ConnectionEstablishedListener {
+public class EasyncClient implements ConnectionEstablishedListener,
+		NetworkAccessProvider {
 
 	private final static Logger LOGGER = Logger.getLogger(EasyncClient.class);
 
@@ -23,38 +24,43 @@ public class EasyncClient implements ConnectionEstablishedListener {
 
 	private ClientSocketCreator socketConnector;
 
+	private FileSyncThread syncThread;
+	
 	public EasyncClient() {
 		config = new EasyncClientConfig();
 
 		establishConnection();
 	}
 
+	public EasyncClient(String[] args) {
+		this();
+		checkArgs(args);
+	}
+
 	/**
-	 * Starts the establishment of the network connection and the requests two sockets from the server.
+	 * Starts the establishment of the network connection and the requests two
+	 * sockets from the server.
 	 */
 	private void establishConnection() {
+		LOGGER.info("Connecting to " + config.getHost() + ":"
+				+ config.getPort() + ". Using sync folder: ["
+				+ config.getSyncFolder() + "]");
+
 		socketConnector = new ClientSocketCreator(config);
 		socketConnector.setListener(this);
 		socketConnector.start();
 	}
 
-	/**
-	 * Writes a line to the control stream, if the network is connected, else does nothing.
-	 * @param line Line to be written
-	 */
+	@Override
 	public void writeLine(String line) {
 		if (network != null) {
 			network.writeLine(line);
-		}
-		else {
+		} else {
 			LOGGER.info("Network not connected yet.");
 		}
 	}
 
-	/**
-	 * Transmits a file to the server, if the network is connected, else does nothing.
-	 * @param filepath Path to the file to be sent
-	 */
+	@Override
 	public void transmitFile(String filepath) {
 		if (network != null) {
 			try {
@@ -69,7 +75,11 @@ public class EasyncClient implements ConnectionEstablishedListener {
 	}
 
 	public static void main(String[] args) {
-		new EasyncClient();
+		if (args == null) {
+			new EasyncClient();
+		} else {
+			new EasyncClient(args);
+		}
 	}
 
 	@Override
@@ -78,10 +88,19 @@ public class EasyncClient implements ConnectionEstablishedListener {
 		Socket dataSocket = socketConnector.getDataSocket();
 
 		this.socketConnector = null;
-		
+
 		// Initializes the network.
 		network = new NetworkHandler(controlSocket, dataSocket, config);
 		network.connect();
-		
+	}
+
+	private void checkArgs(String[] args) {
+		args = new String[] { "--autosync" };
+		for (String arg : args) {
+			if (arg.equals("--autosync")) {
+				syncThread = new FileSyncThread(this, config.getSyncFolder(), 10000);
+				syncThread.start();
+			}
+		}
 	}
 }
