@@ -95,10 +95,9 @@ public class EasyncClient implements ConnectionEstablishedListener,
 	}
 
 	private void checkArgs(String[] args) {
-		args = new String[] { "--autosync" };
-		for (String arg : args) {
-			if (arg.equals("--autosync")) {
-				syncThread = new FileSyncThread(this, config.getSyncFolder(), 10000);
+		for (int i = 0; i < args.length; i++) {
+			if (args[i].equals("--autosync")) {
+				syncThread = new FileSyncThread(this, config.getSyncFolder(), Integer.parseInt(args[i+1])*1000);
 				syncThread.start();
 			}
 		}
