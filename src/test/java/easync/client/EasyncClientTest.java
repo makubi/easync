@@ -1,76 +1,63 @@
 package easync.client;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.io.File;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
-import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import easync.config.EasyncClientConfig;
-import easync.config.EasyncClientConfigTest;
-import easync.config.EasyncServerConfig;
 import easync.server.EasyncServer;
-@Ignore
+
 public class EasyncClientTest {
-	
+
 	private final static Logger LOGGER = Logger.getLogger(EasyncClientTest.class);
-		
-	private final static String host = "localhost";
-	private final static int port = 43443;
-	private final static File clientSyncDir = new File("/tmp/easync/client");
-	private final static File serverWorkDir = new File("/tmp/easync/server");
-	private static File tempFile;
+	
+	private static EasyncClient client;
 	
 	@SuppressWarnings("unused")
 	private static EasyncServer server;
-	private static EasyncClient client;
-	private static EasyncServerConfig serverConf;
-	private static EasyncClientConfig clientConf;
+	
+	private static EasyncClientConfig config = Mockito.mock(EasyncClientConfig.class);
 	
 	@BeforeClass
 	public static void setUpClass() {
-		initProperties();
-		initNetwork();
+		Thread serverThread = new Thread() {
+			@Override
+			public void run() {
+				server = new EasyncServer();
+			}
+		};
+		serverThread.start();
 		
-		if(!clientSyncDir.exists()) {
-			clientSyncDir.mkdirs();
-		}
-		if(!serverWorkDir.exists()) {
-			serverWorkDir.mkdirs();
-		}
-		
-		try {
-			tempFile = File.createTempFile("easync_tmp", null);
-		} catch (IOException e) {
-			LOGGER.error(e);
-		}
+		client = new EasyncClient();
+		EasyncClientConfig conf = new EasyncClientConfig();
+		Mockito.when(config.getSyncFolder()).thenReturn(conf.getSyncFolder());
 	}
 	
 	@Test
-	public void testSendFile() {
-		client.transmitFile(tempFile.getAbsolutePath());
-		Assert.assertTrue(new File(clientSyncDir+File.separator+tempFile.getName()).exists());
+	public void testWriteLine() {
+		client.writeLine("Client says: Hello! :-)");
 	}
 
-	private static void initProperties() {
-		serverConf = mock(EasyncServerConfig.class);
-		clientConf = mock(EasyncClientConfig.class);
-		
-		when(serverConf.getPort()).thenReturn(port);
-		when(serverConf.getWorkDir()).thenReturn(serverWorkDir.getAbsolutePath());
-		when(clientConf.getHost()).thenReturn(host);
-		when(clientConf.getPort()).thenReturn(port);
-		when(clientConf.getSyncFolder()).thenReturn(clientSyncDir.getAbsolutePath());
+	@Test
+	public void testTransmitFile() {
+		try {
+			File file = File.createTempFile("easync_test", null);
+			client.transmitFile(file.getAbsolutePath());
+		} catch (IOException e) {
+			LOGGER.error("An I/O Exception occured. Could not create tempfile",e);
+		}
+
+	}
+	
+	@Test
+	public void fileSyncTest() {
+		for (String file : new File(config.getSyncFolder()).list()) {
+			client.transmitFile(file);
+		}
 	}
 
-	private static void initNetwork() {
-		server = new EasyncServer();
-		client = new EasyncClient();
-	}
 }

@@ -20,7 +20,7 @@ public class NetworkInputHandler extends Thread {
 		String line;
 		try {
 			while((line = input.readLine()) != null) {
-				LOGGER.info("Received command: "+line);
+				LOGGER.debug("Received command: "+line);
 				
 				if(line.equals(NetworkCommands.CMD_SEND_FILE)) {
 					String filepath = input.readLine();

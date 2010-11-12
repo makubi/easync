@@ -9,6 +9,8 @@ import java.util.HashMap;
 import org.apache.log4j.Logger;
 
 import easync.config.EasyncServerConfig;
+import easync.socketestablishment.ConnectionEstablishedListener;
+import easync.socketestablishment.SocketConnector;
 
 
 /**
@@ -44,12 +46,19 @@ public class EasyncServer implements ConnectionEstablishedListener {
 			LOGGER.info("Easync-Server started on port "+port);
 			while(true) {
 				try {
+					// Waits until a client connects.
 					socket = serverSocket.accept();
+					
+					// Creates a new thread that waits for the second socket request.
 					socketCheckThread = new SocketCheckThread(socket,i);
 					socketCheckThread.setSocketCheckMap(socketCache);
 					socketCheckThread.setConnectionEstablishedListener(this);
+					
+					// Adds that thread to the map and starts it.
 					socketCache.put(i, socketCheckThread);
 					socketCheckThread.start();
+					
+					LOGGER.debug("Socket #"+i+" requested.");
 					i++;
 				}
 				catch (NullPointerException e) {
@@ -67,9 +76,9 @@ public class EasyncServer implements ConnectionEstablishedListener {
 	}
 
 	@Override
-	public void connectionEstablished(SocketCheckThread socketCheckThread) {
-		Socket controlSocket = socketCheckThread.getControlSocket();
-		Socket dataSocket = socketCheckThread.getDataSocket();
+	public void connectionEstablished(SocketConnector socketConnector) {
+		Socket controlSocket = socketConnector.getControlSocket();
+		Socket dataSocket = socketConnector.getDataSocket();
 		
 		// Create new ConnectionHandler with the two Sockets and start it.
 		ConnectionHandler connectionHandler = new ConnectionHandler(controlSocket, dataSocket);
@@ -77,9 +86,9 @@ public class EasyncServer implements ConnectionEstablishedListener {
 		connectionHandler.start();
 		
 		// Remove the SocketCheckThread from the map.
-		int socketCheckNumber = socketCheckThread.getCheckNumber();
+		int socketCheckNumber = ((SocketCheckThread) socketConnector).getCheckNumber();
 		socketCache.remove(socketCheckNumber);
 		
-		LOGGER.info("Client #" + socketCheckNumber + " connected at " + controlSocket.getInetAddress());
+		LOGGER.info("Client #" + socketCheckNumber/2 + " connected at " + controlSocket.getInetAddress());
 	}
 }

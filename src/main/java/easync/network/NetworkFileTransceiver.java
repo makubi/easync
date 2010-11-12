@@ -24,27 +24,29 @@ public class NetworkFileTransceiver implements FileTransceiverListener {
 	
 	private String syncFolder;
 	
-	// TODO: Implementierung ueber Kommando-Objekte und Queues, um
-	// Race-Conditions (und synchronized-Bloecke) zu vermeiden.
-	
 	@Override
 	public synchronized void receivingFile(String filepath, int bufferSize, int chunks, int leftoverBytes) {
 		FileOutputStream fos = null;
 		try {
 			int dirFileSeparationPos = getFileSeparationPos(filepath);
 						
-			// TODO: Achtung auf / und \
+			// The filename starts at the next position after the separation.
 			String filename = filepath.substring(dirFileSeparationPos + 1);
 			String filedir = filepath.substring(0, dirFileSeparationPos);
 
+			// Create the sub-directory in the sync folder.
 			File dir = new File(syncFolder + File.separator + filedir);
 			dir.mkdirs();
 
+			// Create the file that should be written to.
 			File file = new File(dir.getAbsolutePath() + File.separator + filename);
 			file.createNewFile();
+			
 			fos = new FileOutputStream(file);
 			
 			byte[] buffer = new byte[bufferSize];
+			
+			LOGGER.info("Receiving file "+file.getAbsolutePath());
 			
 			// Reads the chunks.
 			for (int i = 0; i < chunks; i++) {
@@ -70,23 +72,30 @@ public class NetworkFileTransceiver implements FileTransceiverListener {
 	public void transmitFile(NetworkFile networkFile) {
 		FileInputStream fis = null;
 		try {
+			// Retrieves the infos from the file.
 			int bufferSize = networkFile.getBufferSize();
 			long chunks = networkFile.getChunks();
 			long leftOverBytes = networkFile.getLeftoverBytes();
 			
+			// Opens the file for reading.
 			File file = networkFile.getFile();
 			fis = new FileInputStream(file);
-			
-			networkOutputHandler.writeLine(NetworkCommands.CMD_SEND_FILE);
 
 			byte[] buffer = new byte[bufferSize];
-			String transmittedFilepath = getTransmittedFilepath(file.getAbsolutePath());
 			
+			// Sets the filepath to be transmitted.
+			String transmittedFilepath = getTransmittedFilepath(file.getAbsolutePath());
+
+			LOGGER.info("Sending file "+file.getAbsolutePath());
+			
+			// Transmits the infos.
+			networkOutputHandler.writeLine(NetworkCommands.CMD_SEND_FILE);
 			networkOutputHandler.writeLine(transmittedFilepath);
 			networkOutputHandler.writeLine(bufferSize);
 			networkOutputHandler.writeLine(chunks);
 			networkOutputHandler.writeLine(leftOverBytes);
 
+			// Writes the file data to the data stream.
 			int len;
 			while ((len = fis.read(buffer)) != -1) {
 				dataOutput.write(buffer, 0, len);

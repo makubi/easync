@@ -8,9 +8,7 @@ import easync.network.NetworkFileTransceiver;
 
 /**
  * This class cares about sending a file over the network, if a
- * {@link NetworkFile} is found in the queue. It uses a thread that is paused,
- * after an element is retrieved from the queue. If an element is added to the
- * queue, this thread has to be unpaused. *
+ * {@link NetworkFile} is found in the queue.
  */
 public class NetworkFileQueueHandler extends Thread {
 

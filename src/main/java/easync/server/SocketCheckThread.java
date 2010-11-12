@@ -6,6 +6,9 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 
+import easync.socketestablishment.ConnectionEstablishedListener;
+import easync.socketestablishment.SocketConnector;
+
 /**
  * This class manages the establishment of a connection between the server and the client.
  * It takes care of the association between two sockets.
@@ -13,7 +16,7 @@ import org.apache.log4j.Logger;
  *
  * @see ConnectionEstablishedListener#connectionEstablished(SocketCheckThread)
  */
-public class SocketCheckThread extends Thread {
+public class SocketCheckThread extends Thread implements SocketConnector{
 
 	private final static Logger LOGGER = Logger.getLogger(SocketCheckThread.class);
 	
@@ -50,7 +53,8 @@ public class SocketCheckThread extends Thread {
 				
 				// Removes the SocketCheckThread of the first Socket from the map.
 				socketCheckMap.remove(readNum);
-				LOGGER.debug("Got "+readNum+ " and returned associated Socket.");
+				LOGGER.debug("My checkNumber: "+checkNumber);
+				LOGGER.debug("Read checkNumber "+readNum+ " and returned associated Socket.");
 				
 				// Contacts the Listener, that the connection is established.
 				connectionEstablishedListener.connectionEstablished(this);
@@ -76,6 +80,7 @@ public class SocketCheckThread extends Thread {
 	 * This method should only be called, after the second socket is set.
 	 * @return Control socket
 	 */
+	@Override
 	public Socket getControlSocket() {
 		return foreignSocket;
 	}
@@ -84,6 +89,7 @@ public class SocketCheckThread extends Thread {
 	 * Returns the socket of the data stream.
 	 * @return Data socket.
 	 */
+	@Override
 	public Socket getDataSocket() {
 		return socket;
 	}
