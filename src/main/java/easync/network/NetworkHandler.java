@@ -18,6 +18,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.log4j.Logger;
 
 import easync.config.EasyncClientConfig;
+import easync.config.EasyncConfig;
 import easync.config.EasyncServerConfig;
 import easync.filehandling.NetworkFile;
 import easync.filehandling.NetworkFileCalculator;
@@ -61,7 +62,9 @@ public class NetworkHandler implements Runnable {
 	 * initialized and a connection to the server is established.
 	 * 
 	 * @see easync.network.NetworkHandler#connect()
+	 * @deprecated This constructor was used by the client, but you should pass the two Sockets now.
 	 */
+	@Deprecated
 	public NetworkHandler() {
 		EasyncClientConfig config = new EasyncClientConfig();
 		server = config.getHost();
@@ -87,7 +90,25 @@ public class NetworkHandler implements Runnable {
 		this.dataSocket = dataSocket;
 
 		EasyncServerConfig config = new EasyncServerConfig();
-		this.syncFolder = config.getWorkDir();
+		syncFolder = config.getWorkDir();
+	}
+	
+	public NetworkHandler(Socket controlSocket, Socket dataSocket, EasyncConfig config) {
+		this.controlSocket = controlSocket;
+		this.dataSocket = dataSocket;
+
+		// TODO: Unterscheidung zwischen Server und client nicht ueber EasyncConfig, sondern mit eigenen Implementierungen.
+		if(config instanceof EasyncClientConfig) {
+			server = ((EasyncClientConfig) config).getHost();
+			port = config.getPort();
+			syncFolder = ((EasyncClientConfig) config).getSyncFolder();
+		}
+		
+		// TODO: Config fuer Server nur einmalig erzeugen lassen.
+		else {
+			config = new EasyncServerConfig();
+			syncFolder = ((EasyncServerConfig) config).getWorkDir();
+		}
 	}
 
 	/**

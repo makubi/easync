@@ -5,8 +5,6 @@ import java.io.IOException;
 
 import org.apache.log4j.Logger;
 
-import easync.config.EasyncClientConfig;
-
 /**
  * Provides help functionality for the network.
  */

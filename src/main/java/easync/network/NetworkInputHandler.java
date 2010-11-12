@@ -5,8 +5,6 @@ import java.io.IOException;
 
 import org.apache.log4j.Logger;
 
-import easync.config.EasyncClientConfig;
-
 /**
  * Reads the input stream of the control socket and e.g. starts the method of the receiving of a file.
  */

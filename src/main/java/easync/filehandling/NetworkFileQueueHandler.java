@@ -4,7 +4,6 @@ import java.util.concurrent.BlockingQueue;
 
 import org.apache.log4j.Logger;
 
-import easync.config.EasyncClientConfig;
 import easync.network.NetworkFileTransceiver;
 
 /**

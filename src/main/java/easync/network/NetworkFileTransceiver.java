@@ -9,7 +9,6 @@ import java.io.IOException;
 
 import org.apache.log4j.Logger;
 
-import easync.config.EasyncClientConfig;
 import easync.filehandling.NetworkFile;
 
 /**
